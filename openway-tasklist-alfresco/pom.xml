@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>it.iopenway</groupId>
+		<artifactId>openway-tasklist</artifactId>
+		<version>4.2.4.1.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>openway-tasklist-alfresco</artifactId>
+	<packaging>amp</packaging>
+
+	<name>Intesys Openway Tasklist - Alfresco</name>
+	<description>Intesys Openway Tasklist - Alfresco</description>
+
+	<properties>
+
+		<!-- Alfresco SDK Properties -->
+		<app.testing.jvm.args>-Xms256m -Xmx2048m -XX:MaxPermSize=512m
+			-Duser.language=it</app.testing.jvm.args>
+
+		<alfresco.db.name>openway-tasklist-alfresco-eclipse</alfresco.db.name>
+		<alfresco.db.username>openway-tasklist-alfresco</alfresco.db.username>
+		<alfresco.db.password>openway-tasklist-alfresco</alfresco.db.password>
+		<alfresco.db.url>jdbc:postgresql://localhost:5432/${alfresco.db.name}</alfresco.db.url>
+		<alfresco.db.datasource.class>org.postgresql.Driver</alfresco.db.datasource.class>
+
+		<!-- Defines the target WAR artifactId to run this amp, only used with 
+			the -Pamp-to-war switch . | Allowed values: alfresco | share. Defaults to 
+			a repository AMP, but could point to your foundation WAR -->
+		<alfresco.client.war>alfresco</alfresco.client.war>
+
+		<!-- Defines the target WAR groupId to run this amp, only used with the 
+			-Pamp-to-war switch . | Could be org.alfresco | org.alfresco.enterprise or 
+			your corporate groupId -->
+		<alfresco.client.war.groupId>org.alfresco</alfresco.client.war.groupId>
+
+		<!-- Defines the target WAR version to run this amp, only used with the 
+			-Pamp-to-war switch -->
+		<alfresco.client.war.version>4.2.e</alfresco.client.war.version>
+
+		<noSnapshotVersion>4.2.4.1.0-SNAPSHOT</noSnapshotVersion>
+		
+		<!-- Tomcat properties -->
+		<maven.tomcat.port>9080</maven.tomcat.port>
+	</properties>
+
+	<build>
+		<plugins>
+			<!-- TODO completare plugin di minificazione perche' non riuscivo ad escludere 
+				la path config la quale non va minificata a causa di errori nel compressore 
+				js. Lato server ci sono dei tag (es. <import resource...> ) non accettati 
+				dal compressore js. -->
+			<!-- <plugin> -->
+			<!-- <groupId>net.alchim31.maven</groupId> -->
+			<!-- <artifactId>yuicompressor-maven-plugin</artifactId> -->
+			<!-- <executions> -->
+			<!-- <execution> -->
+			<!-- <phase>package</phase> -->
+			<!-- <goals> -->
+			<!-- <goal>compress</goal> -->
+			<!-- </goals> -->
+			<!-- </execution> -->
+			<!-- </executions> -->
+			<!-- </plugin> -->
+		</plugins>
+
+		<!-- Overrinding Resources of parent pom -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>${app.filtering.enabled}</filtering>
+			</resource>
+			<resource>
+				<directory>${app.amp.folder}</directory>
+				<targetPath>${app.amp.output.folder}</targetPath>
+				<filtering>${app.filtering.enabled}</filtering>
+				<excludes>
+					<!-- Esclusione file autogenerati da Eclipse -->
+					<exclude>**/*.jsfdia</exclude>
+					<!-- Esclusione file che utilizzano marcatori simili a quelli usati 
+						da maven -->
+					<exclude>**/*.ftl</exclude>
+					<exclude>**/*.jasper</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<!-- Inclusione delle risorse che utilizzano marcatori simili a quelli 
+					usati da maven mettendo il filtering a false, cosi' i tag non vengono rimpiazzati -->
+				<directory>${app.amp.folder}</directory>
+				<targetPath>${app.amp.output.folder}</targetPath>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/*.ftl</include>
+					<include>**/*.jasper</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
+
+	<profiles>
+		<!-- Profilo attivato ogni volta che la property obfuscate non è dichiarata. 
+			Non offusca i sorgenti. -->
+		<profile>
+			<id>iopenway-no-obfuscate-profile</id>
+			<activation>
+				<property>
+					<name>!obfuscate</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<!-- Creazione del file jar del progetto in modo che oltre all'amp ci 
+						sia anche una dipendenza da usare in altri progetti. Il file generato ha 
+						classifier jar -->
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>openway-build-jar.jar-not-obfuscated</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<descriptors>
+										<descriptor>assembly-jar-descriptor.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- Profilo attivato ogni volta che la property obfuscate=true. I sorgenti 
+			vengono offuscati con proguard. -->
+		<profile>
+			<id>iopenway-obfuscate-profile</id>
+			<activation>
+				<property>
+					<name>obfuscate</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<!-- In caso di offuscamento faccio pescare le classi compilate nella 
+							cartella dove sono gia' state offuscate. -->
+						<plugin>
+							<groupId>org.alfresco.maven.plugin</groupId>
+							<artifactId>alfresco-maven-plugin</artifactId>
+							<extensions>true</extensions>
+							<configuration combine.children="append">
+								<classesDirectory>${project.build.directory}/classes-ob</classesDirectory>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+				<plugins>
+					<plugin>
+						<groupId>com.github.wvengen</groupId>
+						<artifactId>proguard-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>compile</phase>
+								<goals>
+									<goal>proguard</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<options combine.children="append">
+								<option>-injar ${project.build.directory}/classes/</option>
+								<option>-outjar ${project.build.directory}/classes-ob/</option>
+								<option>-renamesourcefileattribute SourceFile</option>
+								<option>-keepparameternames</option>
+								<option>-keepattributes
+									Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,
+									*Annotation*,EnclosingMethod,!LocalVariableTable,!LocalVariableTypeTable</option>
+								<option>-keep public class * { public protected *;}</option>
+								<!-- Preserve all getter and setter -->
+								<option>-keep class * {
+									void set*(***);
+									void set*(int, ***);
+									boolean is*();
+									boolean is*(int);
+									*** get*();
+									*** get*(int);
+									}</option>
+								<!-- <option><![CDATA[-keep public class * { public protected *;}]]></option> -->
+								<!-- Utile per javaDoc -->
+								<option>-keepclassmembernames
+									class * {
+									java.lang.Class
+									class$(java.lang.String);
+									java.lang.Class
+									class$(java.lang.String, boolean);}</option>
+								<!-- Enumerazioni -->
+								<option>-keepclassmembers
+									enum * {
+									public static **[] values();
+									public static **
+									valueOf(java.lang.String);}</option>
+								<!-- Serializzazioni -->
+								<option>-keepclassmembers
+									class * implements java.io.Serializable
+									{
+									static final long serialVersionUID;
+									private static final
+									java.io.ObjectStreamField[] serialPersistentFields;
+									private void
+									writeObject(java.io.ObjectOutputStream);
+									private void
+									readObject(java.io.ObjectInputStream);
+									java.lang.Object
+									writeReplace();
+									java.lang.Object readResolve();}</option>
+							</options>
+						</configuration>
+					</plugin>
+
+					<!-- Creazione del file jar del progetto in modo che oltre all'amp ci 
+						sia anche una dipendenza da usare in altri progetti. Il file generato ha 
+						classifier jar -->
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>openway-build-jar.jar-obfuscated</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<descriptors>
+										<descriptor>assembly-jar-descriptor-obfuscated.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<dependencies>
+		<dependency>
+			<groupId>${alfresco.groupId}</groupId>
+			<artifactId>alfresco-repository</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco</groupId>
+			<artifactId>alfresco-web-client</artifactId>
+			<!-- Avoid to use the version 1.45 of bouncycastle libs -->
+			<exclusions>
+
+				<!-- alfresco-web-framework-commons escluso perche' alfresco-share 4.2.e 
+					cerca questa dipendenza con il classifier "classes" che non esiste. -->
+				<exclusion>
+					<groupId>org.alfresco</groupId>
+					<artifactId>alfresco-web-framework-commons</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>de.fme.jsconsole</groupId>
+			<artifactId>javascript-console-repo</artifactId>
+			<classifier>${javascript-console.classifier}</classifier>
+		</dependency>
+		<dependency>
+			<groupId>it.iopenway</groupId>
+			<artifactId>openway-alfext-alfresco</artifactId>
+			<classifier>jar</classifier>
+		</dependency>
+		<dependency>
+			<!-- Necessaria per rimuovere errori con "install amp-to-war" -->
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+		</dependency>
+	</dependencies>
+
+</project>
