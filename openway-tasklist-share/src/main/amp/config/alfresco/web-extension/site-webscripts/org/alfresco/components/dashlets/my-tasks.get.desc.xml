@@ -1,0 +1,7 @@
+<webscript>
+   <shortname>My Tasks</shortname>
+   <description>Dashlet to list tasks assigned to the current user</description>
+   <family>user-dashlet</family>
+   <family>site-dashlet</family>
+   <url>/components/dashlets/my-tasks</url>
+</webscript>

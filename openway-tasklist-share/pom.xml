@@ -10,8 +10,8 @@
 	<artifactId>openway-tasklist-share</artifactId>
 	<packaging>amp</packaging>
 
-	<name>TODO - Share</name>
-	<description>TODO - Share</description>
+	<name>Intesys Openway Tasklist - Share</name>
+	<description>Intesys Openway Tasklist - Share</description>
 
 	<properties>
 

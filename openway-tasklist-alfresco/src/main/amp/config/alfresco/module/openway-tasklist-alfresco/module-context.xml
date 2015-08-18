@@ -20,4 +20,5 @@
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
     
+    <import resource="classpath:alfresco/module/openway-tasklist-alfresco/context/webscripts-context.xml" /> 
 </beans>

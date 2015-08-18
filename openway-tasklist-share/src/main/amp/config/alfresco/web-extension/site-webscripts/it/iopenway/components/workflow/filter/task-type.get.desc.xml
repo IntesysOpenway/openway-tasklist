@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>Task Type Filter</shortname>
+  <description>Task type filter</description>
+  <url>/components/iopenway/workflow/filter/task-type</url>
+</webscript>

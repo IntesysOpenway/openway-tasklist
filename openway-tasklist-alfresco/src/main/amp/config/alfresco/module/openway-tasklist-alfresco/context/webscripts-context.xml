@@ -20,4 +20,12 @@
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+	<bean id="webscript.it.iopenway.task-instances.get" class="it.openway.tasklist.alfresco.webscript.TaskInstancesGet" parent="abstractWorkflowWebScript">
+	</bean>
+	
+	<bean id="webscript.it.iopenway.complete-tasks.post" class="it.openway.tasklist.alfresco.webscript.CompleteTasksPost" parent="webscript">
+		<property name="workflowService" ref="WorkflowService" />
+		<property name="transactionService" ref="TransactionService" />
+	</bean>
+	
 </beans>

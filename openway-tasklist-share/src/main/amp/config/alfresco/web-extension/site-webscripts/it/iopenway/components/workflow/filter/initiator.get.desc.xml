@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>Initiator Filter</shortname>
+  <description>Initiator filter</description>
+  <url>/components/iopenway/workflow/filter/initiator</url>
+</webscript>

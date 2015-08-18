@@ -1,0 +1,5 @@
+<config>
+   <filters>
+      <filter id="task-type" data="*" label="task-type.all" />
+   </filters>
+</config>
