@@ -1,0 +1,6 @@
+<webscript>
+	<shortname>Task List</shortname>
+	<description>Component for displaying the user's tasks</description>
+	<url>/components/iopenway/workflow/task-columns</url>
+	<format default="json">argument</format>
+</webscript>
