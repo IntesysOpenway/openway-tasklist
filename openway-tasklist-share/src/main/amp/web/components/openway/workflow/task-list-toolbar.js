@@ -156,11 +156,12 @@ if (typeof Openway == "undefined" || !Openway) {
 						+ "components/iopenway/workflow/task-transitions?taskType=" + taskType,
 					successCallback : {
 						fn : function(response) {
-							if (response.json !== undefined) {
+							if (response.json !== undefined 
+									&& response.json.transitions 
+									&& response.json.transitions.length > 0) {
 								this.widgets.transitions = {};
 								
 								var container = Dom.get(this.id + "-transitions-buttons");
-								
 								for (var i = 0; i < response.json.transitions.length; i++) {
 									var value = response.json.transitions[i].value;
 									var label = response.json.transitions[i].label;
@@ -174,6 +175,7 @@ if (typeof Openway == "undefined" || !Openway) {
 									button.on("click", this._onClickTransitions, button, this );
 									this.widgets.transitions[value] = button;
 								}
+								Dom.removeClass(Selector.query(".task-select"), "hidden");
 			                }
 						},
 						scope : this
@@ -186,6 +188,7 @@ if (typeof Openway == "undefined" || !Openway) {
 			
 			_clearTransitions : function () {
 				this.widgets.transitions = {};
+				Dom.addClass(Selector.query(".task-select"), "hidden");
 				Dom.get(this.id + "-transitions-buttons").innerHTML = "";
 			},
 

@@ -34,7 +34,8 @@ if (typeof Openway == "undefined" || !Openway) {
 
 				this.widgets.filterButton =  Alfresco.util.createYUIButton(this, "filter-button", this._onFilterClick);
 				this.widgets.clearButton =  Alfresco.util.createYUIButton(this, "clear-button", this._onClearClick);
-				// this.widgets.transitionsToolbar = Alfresco.util.ComponentManager.get()
+				
+				this._clear();
 			},
 			
 			_onFilterClick : function () {
@@ -57,7 +58,7 @@ if (typeof Openway == "undefined" || !Openway) {
 				this._refresh(query);
 			},
 			
-			_onClearClick : function () {
+			_clear : function () {
 				var registry = Openway.component.TaskListFilterManagerRegistry;
 				
 				for (i = 0; i < registry.length; i++) {
@@ -66,11 +67,17 @@ if (typeof Openway == "undefined" || !Openway) {
 
 					if (element.id.indexOf('-check') > 0) {
 						element.checked = false;
+
+					} else if (element.id.indexOf('-select') > 0) {
+						element.selectedIndex = 0;
 					} else {
 						element.value = null;
 					}
 				}
-				
+			},
+			
+			_onClearClick : function () {
+				this._clear();
 				this._refresh([]);
 			},
 			

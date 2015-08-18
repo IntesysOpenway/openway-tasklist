@@ -823,6 +823,8 @@ if (typeof Openway == "undefined" || !Openway) {
 		},
 		
 		onFilterTasksChanged : function _onFilterTasksChanged(layer, args) {
+			this.selectedItems = {};
+			
 			var toolbar = this.id.replace("_list_", "_filter-mgr_");
 			toolbar = Alfresco.util.ComponentManager.get(toolbar);
 			
@@ -849,11 +851,6 @@ if (typeof Openway == "undefined" || !Openway) {
 							this.options.order.sort = response.json.columns[0].prop;
 							this.options.order.dir  = "desc";
 							this.initOpenwayUI();
-							
-
-//							this.widgets.pagingDataTable.currentFilter
-
-//							var colDefs = this._createColumnDefinitions();
 		                }
 					},
 					scope : this
