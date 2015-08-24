@@ -200,50 +200,59 @@ if (typeof Openway == "undefined" || !Openway) {
 						taskIds.push(key);
 					}
 				}
+				if (taskIds.length == 0) {
+					return;
+				}
 				
 				var transitionId = p_obj.get("name");
 				
 				if (transitionId.indexOf("fn:")==0) {
 					// E' configurato per chiamare una funzione...
 					var funcName = transitionId.replace("fn:", "");
-					eval(funcName + ".call(this, taskIds)");
+					eval("this." + funcName + "(taskIds)");
 				} else {
-					var me = this;
-					/**
-					 * Funzione per stampare e ricarica la pagina
-					 */
-					function _printReport (report) {
-		               Alfresco.util.PopupManager.displayPrompt({
-                          title: "Esito chiusura tasks",
-                          text: report
-                       });
-		               me.widgets.taskList.widgets.pagingDataTable.reloadDataTable();
-					}
 					
-					// E' configurato per lanciare la chiusura dei tasks selezionati...
-					Alfresco.util.Ajax.jsonPost({
-						url : Alfresco.constants.PROXY_URI + "iopenway/complete-tasks",
-						dataObj : {
-							transitionId : transitionId,
-							taskIds : taskIds
-						},
-						successCallback : {
-							fn : function(response) {
-								if (response.json !== undefined) {
-									_printReport(response.json.report);
-				                }
-							},
-							scope : this
-						},
-						failureCallback : {
-							fn : function(response) {
-								_printReport("Errore non gestito in fase di chiusura dei task.\nRicaricare la pagina.");
-							},
-							scope : this
+					this._completeTasks(transitionId, null, taskIds);
+				}
+			},
+			
+			_completeTasks : function (transitionId, properties, taskIds) {
+				var me = this;
+				/**
+				 * Funzione per stampare e ricarica la pagina
+				 */
+				function _printReport (report) {
+	               Alfresco.util.PopupManager.displayPrompt({
+                      title: "Esito chiusura tasks",
+                      text: report
+                   });
+	               me.widgets.taskList.widgets.pagingDataTable.reloadDataTable();
+				}
+				
+				// E' configurato per lanciare la chiusura dei tasks selezionati...
+				Alfresco.util.Ajax.jsonPost({
+					url : Alfresco.constants.PROXY_URI + "iopenway/complete-tasks",
+					dataObj : {
+						transitionId : transitionId,
+						properties : properties,
+						taskIds : taskIds
+					},
+					successCallback : {
+						fn : function(response) {
+							if (response.json !== undefined) {
+								_printReport(response.json.report);
+			                }
 						},
 						scope : this
-					});
-				}
+					},
+					failureCallback : {
+						fn : function(response) {
+							_printReport("Errore non gestito in fase di chiusura dei task.\nRicaricare la pagina.");
+						},
+						scope : this
+					},
+					scope : this
+				});
 			}
 
 		});
