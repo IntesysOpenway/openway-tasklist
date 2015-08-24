@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.service.cmr.workflow.WorkflowService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.log4j.Logger;
@@ -38,17 +40,31 @@ public class CompleteTasksPost extends DeclarativeWebScript {
     private final static Logger logger = Logger.getLogger(CompleteTasksPost.class);
 
     private WorkflowService workflowService;
+    private NamespaceService namespaceService;
     private TransactionService transactionService;
 
     @Override
     protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
 
-        String transitionId = null;
         List<String> taskIds = new ArrayList<>();
+        String transitionId = null;
+        HashMap<String, Serializable> properties = null;
         try {
             JSONObject params = new JSONObject(new JSONTokener(req.getContent().getContent()));
 
             transitionId = params.has("transitionId") ? params.getString("transitionId") : null;
+
+            if (params.has("properties")) {
+                JSONObject json = params.getJSONObject("properties");
+                properties = new HashMap<>(json.length() + 1);
+                @SuppressWarnings("unchecked")
+                Iterator<String> ite = json.keys();
+                while (ite.hasNext()) {
+                    String key = ite.next();
+                    properties.put(key, (Serializable) json.get(key));
+                }
+
+            }
 
             JSONArray array = params.getJSONArray("taskIds");
             Assert.isTrue(array != null && array.length() > 0, "Nessun task selezionato.");
@@ -66,7 +82,7 @@ public class CompleteTasksPost extends DeclarativeWebScript {
 
         List<String> errors = new ArrayList<>();
         for (int i = 0; i < taskIds.size(); i++) {
-            String error = completeTask(taskIds.get(i), transitionId);
+            String error = completeTask(taskIds.get(i), transitionId, properties);
             if (error != null) {
                 errors.add(error);
             }
@@ -83,9 +99,10 @@ public class CompleteTasksPost extends DeclarativeWebScript {
      * 
      * @param taskId
      * @param transitionId
-     * @return
+     * @param properties
+     * @return errore
      */
-    private String completeTask(final String taskId, final String transitionId) {
+    private String completeTask(final String taskId, final String transitionId, final HashMap<String, Serializable> properties) {
 
         final String owner = AuthenticationUtil.getFullyAuthenticatedUser();
         return AuthenticationUtil.runAsSystem(new RunAsWork<String>() {
@@ -98,6 +115,11 @@ public class CompleteTasksPost extends DeclarativeWebScript {
                 try {
                     tx.begin();
                     HashMap<QName, Serializable> props = new HashMap<>();
+                    if (properties != null) {
+                        for (String key : properties.keySet()) {
+                            props.put(QName.createQName(key, namespaceService), properties.get(key));
+                        }
+                    }
                     props.put(ContentModel.PROP_OWNER, owner);
                     workflowService.updateTask(taskId, props, null, null);
                     workflowService.endTask(taskId, transitionId);
@@ -146,6 +168,11 @@ public class CompleteTasksPost extends DeclarativeWebScript {
     public void setWorkflowService(WorkflowService workflowService) {
 
         this.workflowService = workflowService;
+    }
+
+    public void setNamespaceService(NamespaceService namespaceService) {
+
+        this.namespaceService = namespaceService;
     }
 
     public void setTransactionService(TransactionService transactionService) {

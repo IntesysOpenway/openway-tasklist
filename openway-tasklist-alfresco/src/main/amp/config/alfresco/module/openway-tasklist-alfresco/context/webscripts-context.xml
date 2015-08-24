@@ -25,6 +25,7 @@
 	
 	<bean id="webscript.it.iopenway.complete-tasks.post" class="it.openway.tasklist.alfresco.webscript.CompleteTasksPost" parent="webscript">
 		<property name="workflowService" ref="WorkflowService" />
+		<property name="namespaceService" ref="NamespaceService" />
 		<property name="transactionService" ref="TransactionService" />
 	</bean>
 	
