@@ -109,12 +109,13 @@ if (typeof Openway == "undefined" || !Openway) {
 			/*
 			 * Columns to show in table view
 			 */
-			
 			style: "openway",
 			
 			order: [],
 			
 			columns: [],
+			
+			selectable : false,
 			
 			projectWorkflows: [],
 			
@@ -311,7 +312,7 @@ if (typeof Openway == "undefined" || !Openway) {
 		            hide: false,
 					config:
 					{
-						containers: [this.id + "-paginator"],
+						containers: [this.id + "-paginator", this.id + "-paginatorBottom"],
 						rowsPerPage: this.options.maxItems
 					}
 				}
@@ -444,17 +445,21 @@ if (typeof Openway == "undefined" || !Openway) {
 
 		_createColumnDefinitions : function () {
 			var props = [];
-			for( var p in this.options.taskProps )
+			for( var p in this.options.taskProps ) {
 				props.push(this.options.taskProps[p]);
-			for( var p in this.options.extProps )
+			}
+			for( var p in this.options.extProps ) {
 				props.push(this.options.extProps[p]);
+			}
 
 			var columns = this.options.columns;
 			columns.push('actions');
 
 			var colDefs = [];
 
-			colDefs.push({ key: "taskId", label: "", sortable: false, formatter: this.renderCellSelected(), width: 16 });
+			if (this.options.selectable) {
+				colDefs.push({ key: "taskId", label: "", sortable: false, formatter: this.renderCellSelected(), width: 16 });
+			}
 
 			for (var c in columns)
 			{
@@ -499,8 +504,7 @@ if (typeof Openway == "undefined" || !Openway) {
 		{
 			var record = oRecord.getData();
 			var date = Alfresco.util.fromISO8601(record.properties[oColumn.key]);
-			elCell.innerHTML = ( date !== null ?
-							Alfresco.util.formatDate(date, "mediumDate") : this.msg("label.noDate") );
+			elCell.innerHTML = ( date !== null ? Alfresco.util.formatDate(date, "mediumDate") : "" );
 		},
 		
 		renderStateCell: function(elCell, oRecord, oColumn, oData)
@@ -657,7 +661,7 @@ if (typeof Openway == "undefined" || !Openway) {
 				{
 					config:
 					{
-						containers: [this.id + "-paginator"],
+						containers: [this.id + "-paginator", this.id + "-paginatorBottom"],
 						rowsPerPage: this.options.maxItems
 					}
 				}
@@ -818,8 +822,8 @@ if (typeof Openway == "undefined" || !Openway) {
 		 */
 		onFilterChanged: function BaseFilter_onFilterChanged(layer, args)
 		{
-			var filter = Alfresco.util.cleanBubblingObject(args[1]);
-			Dom.get(this.id + "-filterTitle").innerHTML = $html(this.msg("filter." + filter.filterId + (filter.filterData ? "." + filter.filterData : ""), filter.filterData));
+//			var filter = Alfresco.util.cleanBubblingObject(args[1]);
+//			Dom.get(this.id + "-filterTitle").innerHTML = $html(this.msg("filter." + filter.filterId + (filter.filterData ? "." + filter.filterData : ""), filter.filterData));
 		},
 		
 		onFilterTasksChanged : function _onFilterTasksChanged(layer, args) {
@@ -835,7 +839,8 @@ if (typeof Openway == "undefined" || !Openway) {
 					taskType = filter.replace("task-type|", "");
 				}
 			}
-
+			this.options.selectable = taskType != null && taskType != "" && taskType != "*";
+			
 			// Recupera le colonne..
 			Alfresco.util.Ajax.jsonGet({
 				url : Alfresco.constants.URL_SERVICECONTEXT

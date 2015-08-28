@@ -9,14 +9,10 @@ function main()
 	model.maxItems = getMaxItems();
 	
 	var myConfig = new XML(config.script),
-		headerHidden = myConfig["headerHidden"],
 		sorters = [];
 	
 
 	model.headerHidden = true;
-	if (headerHidden && headerHidden=="false") {
-		model.headerHidden = false;
-	}
 	
 	for each(var xmlSorter in myConfig.sorters.sorter)
 	{

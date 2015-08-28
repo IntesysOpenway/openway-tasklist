@@ -45,11 +45,7 @@
             <div class="align-left" id="${id}-paginator">&nbsp;</div>
             <span class="align-right yui-button-align">
                <span class="first-child">
-                  <a href="${url.context}/page/my-tasks#filter=workflows|active" class="theme-color-1">${msg("link.activeTasks")}</a>
-               </span>
-               <span>&#124;</span>
-               <span class="first-child">
-                  <a href="${url.context}/page/my-tasks#filter=workflows|completed" class="theme-color-1">${msg("link.completedTasks")}</a>
+                  <a href="${url.context}/page/iopenway-my-tasks" class="theme-color-1">${msg("link.detailedView")}</a>
                </span>
             </span>
             <div class="clear"></div>

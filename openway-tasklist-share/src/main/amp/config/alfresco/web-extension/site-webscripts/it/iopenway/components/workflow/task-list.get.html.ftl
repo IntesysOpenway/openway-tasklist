@@ -15,28 +15,15 @@
 	
 	<#assign el=args.htmlid?html>
 	<div id="${el}-body" class="task-list">
-	   <div class="yui-g task-list-bar flat-button theme-bg-color-1 <#if headerHidden>hidden</#if>">
+	   <div class="yui-g task-list-bar flat-button theme-bg-color-1">
 	      <div class="yui-u first">
-	         <h2 id="${el}-filterTitle" class="thin" style="float:left">
-	            &nbsp;
-	         </h2>
-	         <!-- nascosto - non ancora supportato -->
-	         <span class="align-left yui-button yui-menu-button hidden" id="${el}-sorters">
-	            <span class="first-child">
-	               <button type="button" tabindex="0"></button>
-	            </span>
-	         </span>
-	         <select id="${el}-sorters-menu"> 
-	         <#list sorters as sorter>
-	            <option value="${sorter.type?html}">${msg("sorter." + sorter.type)}</option>
-	         </#list>
-	         </select>
-	      </div>
-	      <div class="yui-u">
 	         <div id="${el}-paginator" class="paginator">&nbsp;</div>
 	      </div>
-	   </div>
-	   <div id="${el}-tasks" class="tasks"></div>
+		</div>
+		<div id="${el}-tasks" class="tasks"></div>
+		<div class="yui-u">
+			<div id="${el}-paginatorBottom" class="paginator">&nbsp;</div>
+		</div>
 	</div>
 </@>
 
