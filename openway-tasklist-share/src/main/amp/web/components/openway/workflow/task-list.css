@@ -198,7 +198,8 @@
 
 .task-list .task-edit-link,
 .task-list .task-view-link,
-.task-list .workflow-view-link
+.task-list .history-view-link,
+.task-list .workflow-view-diagram
 {
    background: no-repeat scroll 4px 1px;
    border: 1px solid transparent;
@@ -216,14 +217,16 @@
    background-image: url( ../../images/task-16.png );
 }
 
-.task-list .workflow-view-link
+.task-list .history-view-link,
+.task-list .workflow-view-diagram
 {
    background-image: url( ../../images/workflow-16.png );
 }
 
 .task-list .task-edit-link a,
 .task-list .task-view-link a,
-.task-list .workflow-view-link a
+.task-list .history-view-link a,
+.task-list .workflow-view-diagram a
 {
    min-height: 2em;
    cursor: pointer;
@@ -236,7 +239,8 @@
 
 .task-list .task-edit-link-over,
 .task-list .task-view-link-over,
-.task-list .workflow-view-link-over
+.task-list .history-view-link-over,
+.task-list .workflow-view-diagram-over
 {
    background-color: #FFF;
    border: 1px solid #2B6EB5;

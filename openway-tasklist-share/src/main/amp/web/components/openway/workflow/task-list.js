@@ -145,12 +145,12 @@ if (typeof Openway == "undefined" || !Openway) {
 		onReady: function DL_onReady()
 		{
 			// Create sorter menu
-			this.widgets.sorterMenuButton = Alfresco.util.createYUIButton(this, "sorters", this.onSorterSelected,
-					{
-						type: "menu",
-						menu: "sorters-menu",
-						lazyloadmenu: false
-					});
+//			this.widgets.sorterMenuButton = Alfresco.util.createYUIButton(this, "sorters", this.onSorterSelected,
+//					{
+//						type: "menu",
+//						menu: "sorters-menu",
+//						lazyloadmenu: false
+//					});
 			
 			var me = this;
 			if( Alfresco.constants.SITE === "" )
@@ -215,8 +215,8 @@ if (typeof Openway == "undefined" || !Openway) {
 			// Select the preferred sorter in the ui
 			var sorter = Alfresco.util.findValueByDotNotation(p_response.json, PREFERENCES_MY_TASKS_SORTER, "byDueDate");
 			sorter = this.options.sorters.hasOwnProperty(sorter) ? sorter : "byDueDate";
-			this.widgets.sorterMenuButton.set("label", this.msg("sorter." + sorter));
-			this.widgets.sorterMenuButton.value = sorter;
+//			this.widgets.sorterMenuButton.set("label", this.msg("sorter." + sorter));
+//			this.widgets.sorterMenuButton.value = sorter;
 
 			this.options.style = Alfresco.util.findValueByDotNotation(p_response.json, PREFERENCES_MY_TASKS_STYLE, "openway");
 			var columns = null;
@@ -617,9 +617,12 @@ if (typeof Openway == "undefined" || !Openway) {
 		renderShortActionsCell: function(elCell, oRecord, oColumn, oData)
 		{
 			// Create actions using WorkflowAction
-			if (oRecord.getData('isEditable'))
-			{
+			if (oRecord.getData('isEditable')) {
 				this.createAction(elCell, this.msg("link.editTask"), "task-edit-link", $siteURL('task-edit?taskId=' + oRecord.getData('id') + '&referrer=tasks&myTasksLinkBack=true'));
+			}
+			this.createAction(elCell, this.msg("link.viewHistory"), "history-view-link", $siteURL('workflow-details?workflowId=' + oRecord.getData('workflowInstance').id + '&' + 'taskId=' + oRecord.getData('id') + '&referrer=tasks&myTasksLinkBack=true#current-tasks'));
+			if (oRecord.getData('isEditable')) {
+				this.createAction(elCell, this.msg("link.viewWorkflowDiagram"), "workflow-view-diagram", function () { this.viewWorkflowDiagram(oRecord); });
 			}
 		},
 				
@@ -668,11 +671,11 @@ if (typeof Openway == "undefined" || !Openway) {
 			});
 		},
 		
-		getReqParameters: function()
-		{
-			var parameters = this.options.sorters[this.widgets.sorterMenuButton.value];
-			return parameters;
-		},
+//		getReqParameters: function()
+//		{
+//			var parameters = this.options.sorters[this.widgets.sorterMenuButton.value];
+//			return parameters;
+//		},
 		
 		getDataSourceURL: function()
 		{
@@ -704,8 +707,8 @@ if (typeof Openway == "undefined" || !Openway) {
 
 			if (menuItem)
 			{
-				this.widgets.sorterMenuButton.set("label", menuItem.cfg.getProperty("text"));
-				this.widgets.sorterMenuButton.value = menuItem.value;
+//				this.widgets.sorterMenuButton.set("label", menuItem.cfg.getProperty("text"));
+//				this.widgets.sorterMenuButton.value = menuItem.value;
 
 				this.widgets.pagingDataTable.widgets.dataSource.liveData = this.getDataSourceURL();
 				this.widgets.pagingDataTable.loadDataTable(/*this.getReqParameters()*/);
@@ -1000,7 +1003,16 @@ if (typeof Openway == "undefined" || !Openway) {
 				this.createAction(elCell, this.msg("link.editTask"), "task-edit-link", $siteURL('task-edit?taskId=' + oRecord.getData('id') + '&referrer=tasks&myTasksLinkBack=true'));
 			}
 			this.createAction(elCell, this.msg("link.viewTask"), "task-view-link", $siteURL('task-details?taskId=' + oRecord.getData('id') + '&referrer=tasks&myTasksLinkBack=true'));
-			this.createAction(elCell, this.msg("link.viewWorkflow"), "workflow-view-link", $siteURL('workflow-details?workflowId=' + oRecord.getData('workflowInstance').id + '&' + 'taskId=' + oRecord.getData('id') + '&referrer=tasks&myTasksLinkBack=true'));
+			this.createAction(elCell, this.msg("link.viewHistory"), "history-view-link", $siteURL('workflow-details?workflowId=' + oRecord.getData('workflowInstance').id + '&' + 'taskId=' + oRecord.getData('id') + '&referrer=tasks&myTasksLinkBack=true#current-tasks'));
+		},
+
+		/**
+		 * Called when view workflow diagram button is clicked.
+		 * WIll display the workflow's diagram.
+		 */
+		viewWorkflowDiagram: function(oRecord) {
+			var diagramUrl = "api/workflow-instances/" + oRecord.getData('workflowInstance').id + "/diagram";
+			showLightbox({ src: Alfresco.constants.PROXY_URI + diagramUrl });
 		}
 
 	}, true
