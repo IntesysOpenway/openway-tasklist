@@ -54,7 +54,7 @@ public class CompleteTasksPost extends DeclarativeWebScript {
 
             transitionId = params.has("transitionId") ? params.getString("transitionId") : null;
 
-            if (params.has("properties")) {
+            if (params.has("properties") && !params.isNull("properties")) {
                 JSONObject json = params.getJSONObject("properties");
                 properties = new HashMap<>(json.length() + 1);
                 @SuppressWarnings("unchecked")
