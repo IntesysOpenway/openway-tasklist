@@ -15,6 +15,7 @@
 
 	<properties>
 		<property name="bpm_description" width="0" formatter="renderTitleCell" />
+		<property name="taskType" width="100" formatter="renderTaskTypeCell" />
 		<property name="bpm_startDate" width="100" formatter="renderDateCell" />
 		<property name="bpm_dueDate" width="100" formatter="renderDateCell" />
 	</properties>

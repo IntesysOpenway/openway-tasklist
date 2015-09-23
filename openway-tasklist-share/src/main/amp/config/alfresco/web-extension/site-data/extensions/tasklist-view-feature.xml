@@ -7,7 +7,11 @@
 			<customizations>
 				<customization>
 					<targetPackageRoot>org.alfresco.share.header</targetPackageRoot>
-					<sourcePackageRoot>it.iopenway.share.tasklist-share-header</sourcePackageRoot>
+					<sourcePackageRoot>it.iopenway.customizations.share.tasklist-share-header</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.workflow</targetPackageRoot>
+					<sourcePackageRoot>it.iopenway.customizations.tasklist-workflow</sourcePackageRoot>
 				</customization>
 			</customizations>
 		</module>

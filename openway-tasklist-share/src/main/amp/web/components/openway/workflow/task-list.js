@@ -121,6 +121,7 @@ if (typeof Openway == "undefined" || !Openway) {
 			
 			taskProps: [
 				{ prop: "bpm_description", width: 0, formatter: 'renderTitleCell' } ,
+				{ prop: "taskType", width: 100, formatter: 'renderTaskTypeCell' },
 				{ prop: "bpm_startDate", width: 100, formatter: 'renderDateCell' }, 
 				{ prop: "bpm_dueDate", width: 100, formatter: 'renderDateCell' }
 			],
@@ -130,7 +131,6 @@ if (typeof Openway == "undefined" || !Openway) {
 //				{ prop: "state", width: 50, formatter: 'renderStateCell' },
 //				{ prop: "initiator", width: 100, formatter: 'renderInitiatorCell' },
 //				{ prop: "owner", width: 100, formatter: 'renderOwnerCell' },
-//				{ prop: "taskType", width: 100, formatter: 'renderTaskTypeCell' },
 //				{ prop: "wflType", width: 100, formatter: 'renderWflTypeCell' },
 //				{ prop: "icons", width: 100, formatter: 'renderIconsCell' }
 //			]

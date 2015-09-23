@@ -231,7 +231,7 @@ if (typeof Openway == "undefined" || !Openway) {
 				
 				// E' configurato per lanciare la chiusura dei tasks selezionati...
 				Alfresco.util.Ajax.jsonPost({
-					url : Alfresco.constants.PROXY_URI + "iopenway/complete-tasks",
+					url : Alfresco.constants.PROXY_URI + "it/iopenway/complete-tasks",
 					dataObj : {
 						transitionId : transitionId,
 						properties : properties,
