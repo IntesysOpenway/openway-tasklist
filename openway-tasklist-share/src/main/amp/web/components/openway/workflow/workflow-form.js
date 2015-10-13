@@ -148,7 +148,7 @@
       renderCellOutcome: function WorkflowForm_renderCellOutcome(elCell, oRecord, oColumn, oData)
       {
     	  var outcome = oRecord.getData("outcome");
-    	  elCell.innerHTML = $html(outcome ? outcome : "");
+    	  elCell.innerHTML = $html(outcome && outcome!="null" ? outcome : "");
       },
 
    }, true);

@@ -621,7 +621,8 @@ if (typeof Openway == "undefined" || !Openway) {
 				this.createAction(elCell, this.msg("link.editTask"), "task-edit-link", $siteURL('task-edit?taskId=' + oRecord.getData('id') + '&referrer=tasks&myTasksLinkBack=true'));
 			}
 			this.createAction(elCell, this.msg("link.viewHistory"), "history-view-link", $siteURL('workflow-details?workflowId=' + oRecord.getData('workflowInstance').id + '&' + 'taskId=' + oRecord.getData('id') + '&referrer=tasks&myTasksLinkBack=true#current-tasks'));
-			if (oRecord.getData('isEditable')) {
+			var instance = oRecord.getData('workflowInstance');
+			if (instance && instance.isActive) {
 				this.createAction(elCell, this.msg("link.viewWorkflowDiagram"), "workflow-view-diagram", function () { this.viewWorkflowDiagram(oRecord); });
 			}
 		},
