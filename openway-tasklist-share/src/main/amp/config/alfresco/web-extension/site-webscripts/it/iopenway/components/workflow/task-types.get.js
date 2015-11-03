@@ -1,4 +1,25 @@
 
+var groups = null;
+var userId = user.id;
+
+logger.log(userId);
+
+function userHasGroup(group) {
+	if (groups==null) {
+		groups = [];
+		var result = remote.call("/api/people/" + stringUtils.urlEncode(userId) + "?groups=true");
+		if (result.status == 200) {
+			var user = eval('(' + result + ')');
+	      	groups = user.groups;
+		}
+	}
+	
+    for (i=0; i < groups.length; i++) {
+    	if (groups[i].itemName == group) return true;
+	}
+	return false;
+}
+
 function getTaskTypeConfig(itemId) {
 	logger.log("getTaskTypeConfig");
 
@@ -14,11 +35,14 @@ function getTaskTypeConfig(itemId) {
 			if (taskTypes!=null) {
 				for( i = 0; i < taskTypes.size(); i++) {
 					var taskType = taskTypes.get(i);
-					logger.log(" - " + taskType);
-					response.push({ 
-						value : taskType.getAttribute("value"), 
-						label : taskType.getAttribute("label")
-					});
+					
+					if (!taskType.hasAttribute("group") || userHasGroup(taskType.getAttribute("group"))) {
+						logger.log(" - " + taskType);
+						response.push({ 
+							value : taskType.getAttribute("value"), 
+							label : taskType.getAttribute("label")
+						});
+					}
 				}
 			}
 		}

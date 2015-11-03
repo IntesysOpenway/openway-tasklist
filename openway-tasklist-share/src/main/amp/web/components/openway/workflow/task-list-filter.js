@@ -65,6 +65,10 @@ if (typeof Openway == "undefined" || !Openway) {
 									var option = document.createElement('option');
 								    option.text = response.json.taskTypes[i].label;
 								    option.value = response.json.taskTypes[i].value;
+								    Dom.addClass(option, "task-type");
+								    if (i == 0) {
+								    	option.selected = true;
+								    }
 								    taskTypeEl.add(option, 0);
 								}
 			                }
