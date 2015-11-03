@@ -34,8 +34,47 @@ if (typeof Openway == "undefined" || !Openway) {
 
 				this.widgets.filterButton =  Alfresco.util.createYUIButton(this, "filter-button", this._onFilterClick);
 				this.widgets.clearButton =  Alfresco.util.createYUIButton(this, "clear-button", this._onClearClick);
+
+				var workflowTypeId =  this.id.replace('_filter-mgr_', '_workflow-type-filter_') + '-select';
+				var taskTypeId =  this.id.replace('_filter-mgr_', '_task-type-filter_') + '-select';
+				YAHOO.util.Event.onContentReady(workflowTypeId, function() {
+					new YAHOO.util.Element(workflowTypeId).on("change", function() { me._onWorkflowTypeChange(workflowTypeId, taskTypeId) });
+					me._onWorkflowTypeChange(workflowTypeId, taskTypeId);
+				}, this, true);
 				
 				this._clear();
+			},
+			
+			_onWorkflowTypeChange : function (workflowTypeId, taskTypeId) {
+				var workflowType = Dom.get(workflowTypeId).value;
+				var taskTypeEl = Dom.get(taskTypeId);
+				for(i = taskTypeEl.options.length-1; i >= 0; i--) {
+					taskTypeEl.remove(i);
+			    }
+				
+				Alfresco.util.Ajax.jsonGet({
+					url : Alfresco.constants.URL_SERVICECONTEXT
+						+ "components/iopenway/workflow/task-types?workflow-type=" + workflowType,
+					successCallback : {
+						fn : function(response) {
+							if (response.json !== undefined 
+									&& response.json.taskTypes 
+									&& response.json.taskTypes.length > 0) {
+
+								for (var i = response.json.taskTypes.length - 1; i >=0 ; i--) {
+									var option = document.createElement('option');
+								    option.text = response.json.taskTypes[i].label;
+								    option.value = response.json.taskTypes[i].value;
+								    taskTypeEl.add(option, 0);
+								}
+			                }
+						},
+						scope : this
+					},
+					failureMessage : "Errore in fase di inizializzazione della form",
+					scope : this
+				});
+				
 			},
 			
 			_onFilterClick : function () {
