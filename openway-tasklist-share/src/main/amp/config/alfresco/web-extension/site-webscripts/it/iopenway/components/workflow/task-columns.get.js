@@ -42,6 +42,7 @@ logger.log(response.length);
 if (response==null || response.length == 0) {
 	response = [
 	    { prop: "bpm_description", width: 0, formatter: 'renderTitleCell' },
+		{ prop: "taskType", width: 100, formatter: 'renderTaskTypeCell' },
     	{ prop: "bpm_startDate", width: 100, formatter: 'renderDateCell' }, 
     	{ prop: "bpm_dueDate", width: 100, formatter: 'renderDateCell' }
     ];
