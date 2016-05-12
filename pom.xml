@@ -10,7 +10,7 @@
 
 	<groupId>it.iopenway</groupId>
 	<artifactId>openway-tasklist</artifactId>
-	<version>4.2.4.1.0-SNAPSHOT</version>
+	<version>4.2.4.1.0</version>
 	<packaging>pom</packaging>
 
 	<name>Intesys Openway Tasklist</name>
@@ -47,7 +47,7 @@
 
 	<scm>
 		<!-- URL to SVN folder that contains this pom -->
-		<developerConnection>scm:svn:${scm-project-trunk.url}</developerConnection>
+		<developerConnection>scm:svn:http://172.28.13.245/svn/alfresco/moduli/openway-tasklist/tags/openway-tasklist-4.2.4.1.0</developerConnection>
 	</scm>
 
 	<distributionManagement>
@@ -224,7 +224,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<execute/>
+										<execute />
 									</action>
 								</pluginExecution>
 								<pluginExecution>
@@ -237,7 +237,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<execute/>
+										<execute />
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
