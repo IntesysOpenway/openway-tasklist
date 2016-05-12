@@ -45,11 +45,13 @@
          /**
           * Openway Extension: modificato url webscript affinche' venga usato quello di openway che permette l'ordinamento dei risultati
           */
-         var webscript = YAHOO.lang.substitute("api/iopenway/task-instances?authority={authority}&properties={properties}&exclude={exclude}&sort=bpm_startDate&dir=desc",
+         var webscript = YAHOO.lang.substitute("api/iopenway/task-instances?authority={authority}&properties={properties}&exclude={exclude}&sort={sort}&dir={dir}",
          {
             authority: encodeURIComponent(Alfresco.constants.USERNAME),
             properties: ["bpm_priority", "bpm_status", "bpm_dueDate", "bpm_description"].join(","),
-            exclude: this.options.hiddenTaskTypes.join(",")
+            exclude: this.options.hiddenTaskTypes.join(","),
+            sort: this.options.sort ? this.options.sort : "bpm_startDate",
+            dir: this.options.dir ? this.options.dir : "desc",
          });
 
          /**
