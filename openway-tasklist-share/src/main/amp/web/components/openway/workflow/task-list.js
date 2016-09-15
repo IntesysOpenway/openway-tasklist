@@ -25,11 +25,34 @@ if (typeof Openway == "undefined" || !Openway) {
 	/**
 	 * Preferences
 	 */
-	var PREFERENCES_MY_TASKS = "org.alfresco.share.my.tasks";
+	var PREFERENCES_MY_TASKS = "it.iopenway.share.my.tasks";
 	var PREFERENCES_MY_TASKS_FILTER = PREFERENCES_MY_TASKS + ".filter";
-	var PREFERENCES_MY_TASKS_SORTER = PREFERENCES_MY_TASKS + ".sorter";
-	var PREFERENCES_MY_TASKS_COLUMNS = PREFERENCES_MY_TASKS + ".columns";
-	var PREFERENCES_MY_TASKS_STYLE = PREFERENCES_MY_TASKS + ".style";
+	var PREFERENCES_MY_TASKS_ORDER_SORT = PREFERENCES_MY_TASKS + ".sort";
+	var PREFERENCES_MY_TASKS_ORDER_DIR = PREFERENCES_MY_TASKS + ".dir";
+	
+
+	YAHOO.lang.augmentObject(Alfresco.util.DataTable.prototype,
+	{
+		setFilterState : function DataTable_setFilterState(filterState) {
+	         
+	         if (typeof filterState == "string") {
+	        	 filterState = filterState.indexOf(",") > 0 ? filterState.split(",") : [filterState]; 
+	         }
+
+	         this.currentFilter = [];
+	         for (var i = 0; i < filterState.length; i++) {
+		         var filter = {};
+		         if (filterState[i].indexOf("|") > 0) {
+		            var filterTokens = filterState[i].split("|");
+		            filter.filterId = filterTokens[0];
+		            filter.filterData = filterTokens.slice(1).join("|"); // Make sure '|' characters in the data value remains
+		         } else {
+		            filter.filterId = filterState[i].length > 0 ? filterState[i] : undefined;
+		         }
+		         this.currentFilter.push(filter);
+	         }
+	    }
+	}, true);
 
 	/**
 	 * TaskList constructor.
@@ -49,7 +72,6 @@ if (typeof Openway == "undefined" || !Openway) {
 		 * Decoupled event listeners
 		 */
 		YAHOO.Bubbling.on("filterChanged", this.onFilterChanged, this);
-		YAHOO.Bubbling.on("taskListPrefsUpdated", this.loadPreferences, this);
 		YAHOO.Bubbling.on("taskListTableReload", this.onTableReload, this);
 
 		YAHOO.Bubbling.on("filterTasksChanged", this.onFilterTasksChanged, this);
@@ -126,14 +148,6 @@ if (typeof Openway == "undefined" || !Openway) {
 				{ prop: "bpm_dueDate", width: 100, formatter: 'renderDateCell' }
 			],
 			
-//			// TODO - should we have 'created' separately for task and workflow?
-//			extProps: [
-//				{ prop: "state", width: 50, formatter: 'renderStateCell' },
-//				{ prop: "initiator", width: 100, formatter: 'renderInitiatorCell' },
-//				{ prop: "owner", width: 100, formatter: 'renderOwnerCell' },
-//				{ prop: "wflType", width: 100, formatter: 'renderWflTypeCell' },
-//				{ prop: "icons", width: 100, formatter: 'renderIconsCell' }
-//			]
 		},
 		
 		/**
@@ -144,14 +158,6 @@ if (typeof Openway == "undefined" || !Openway) {
 		 */
 		onReady: function DL_onReady()
 		{
-			// Create sorter menu
-//			this.widgets.sorterMenuButton = Alfresco.util.createYUIButton(this, "sorters", this.onSorterSelected,
-//					{
-//						type: "menu",
-//						menu: "sorters-menu",
-//						lazyloadmenu: false
-//					});
-			
 			var me = this;
 			if( Alfresco.constants.SITE === "" )
 			{
@@ -212,65 +218,78 @@ if (typeof Openway == "undefined" || !Openway) {
 		onPreferencesLoaded: function MyTasks_onPreferencesLoaded(p_response)
 		{
 
-			// Select the preferred sorter in the ui
-			var sorter = Alfresco.util.findValueByDotNotation(p_response.json, PREFERENCES_MY_TASKS_SORTER, "byDueDate");
-			sorter = this.options.sorters.hasOwnProperty(sorter) ? sorter : "byDueDate";
-//			this.widgets.sorterMenuButton.set("label", this.msg("sorter." + sorter));
-//			this.widgets.sorterMenuButton.value = sorter;
+			this.preferences = { filter : "", order : {	sort : "", dir : ""	}};
+			this.preferences.filter = Alfresco.util.findValueByDotNotation(p_response.json, PREFERENCES_MY_TASKS_FILTER, "");
+			this.preferences.order.sort = Alfresco.util.findValueByDotNotation(p_response.json, PREFERENCES_MY_TASKS_ORDER_SORT, "");
+			this.preferences.order.dir = Alfresco.util.findValueByDotNotation(p_response.json, PREFERENCES_MY_TASKS_ORDER_DIR, "");
 
-			this.options.style = Alfresco.util.findValueByDotNotation(p_response.json, PREFERENCES_MY_TASKS_STYLE, "openway");
-			var columns = null;
-			for(var i = 0; i < this.options.taskProps.length; i++) {
-				if (columns) columns = columns + ",";
-				columns = columns + (i + 1) + "$" + this.options.taskProps[i].prop;
-			}
-				
-			columns = Alfresco.util.findValueByDotNotation(p_response.json, PREFERENCES_MY_TASKS_COLUMNS, columns).split(',');
-			
-			this.options.columns = [];
-			for(var c in columns)
-			{
-				var col = columns[c].split('$');
-				this.options.columns.push(col[1]);
-			}
-			
-			var availableColumns = [];
-			for(var p in this.options.taskProps)
-				if( this.options.taskProps[p].width >= 0 )
-					availableColumns.push(
-						{
-							id: this.options.taskProps[p].prop, 
-							label: this.msg(this.msg("column.title." + this.options.taskProps[p].prop)) 
-						}
-					);
-			for(var p in this.options.extProps)
-				if( this.options.extProps[p].width >= 0 )
-					availableColumns.push(
-						{
-							id: this.options.extProps[p].prop, 
-							label: this.msg(this.msg("column.title." + this.options.extProps[p].prop)) 
-						}
-					);
-			
-			YAHOO.Bubbling.fire("taskListPreferencesLoaded",
-			{
-				availableColumns: availableColumns,
-				currentColumns: this.options.columns
-			});
-			
-			this.initUI();
+			var compo = this.id.replace("_list_", "_filter-mgr_");
+			compo = Alfresco.util.ComponentManager.get(compo);
+			compo.options.currentFilter = this.preferences.filter ? this.preferences.filter.split(",") : [];
+			compo._loadCurrentFilters();
+
+			this._setupHistory(this.preferences.filter);
+
+			YAHOO.Bubbling.fire("filterTasksChanged");
+		},
+		
+		_setupHistory : function (currentFilter) {
+			var History = YAHOO.util.History;
+
+			var me = this;
+            var onNewHistoryPagingState = function (pagingState) {
+            	if (me.widgets.pagingDataTable) {
+                	me.widgets.pagingDataTable.setPagingState(pagingState);
+                	if (History.getBookmarkedState("filter") == null || History.getBookmarkedState("filter") == History.getCurrentState("filter")) {
+                		me.widgets.pagingDataTable.loadDataTable();
+                	}
+            	}
+            };
+
+            var onNewHistoryFilterState = function (filterState) {
+            	if (me.widgets.pagingDataTable) {
+                	me.widgets.pagingDataTable.setFilterState(filterState);
+                	me.widgets.pagingDataTable.loadDataTable();
+            	}
+            };
+
+           // Register the module with states taken either from the url (or from the default values if not present)
+           History.register("paging", History.getBookmarkedState("paging") || "0|" + this.options.maxItems, onNewHistoryPagingState);
+           History.register("filter", History.getBookmarkedState("filter") || "", onNewHistoryFilterState);
+
+           // Initialize the Browser History Manager.
+           History.onReady(function () {
+        	   YAHOO.util.History.multiNavigate({'filter': currentFilter});
+           }, {}, this);
+           try
+           {
+              // Create the html elements needed for history management
+              var historyMarkup = '';
+              if (YAHOO.env.ua.ie > 0 && !Dom.get("yui-history-iframe"))
+              {
+                 historyMarkup += '<iframe id="yui-history-iframe" src="' + Alfresco.constants.URL_RESCONTEXT + 'yui/history/assets/blank.html" style="display: none;"></iframe>';
+              }
+              if (!Dom.get("yui-history-field"))
+              {
+                 historyMarkup +='<input id="yui-history-field" type="hidden" />';
+              }
+              if (historyMarkup.length > 0)
+              {
+                 var historyManagementEl = document.createElement("div");
+                 historyManagementEl.innerHTML = historyMarkup;
+                 document.body.appendChild(historyManagementEl);
+              }
+              History.initialize("yui-history-field", "yui-history-iframe");
+           }
+           catch(e)
+           {
+              Alfresco.logger.error(this.name + ": Couldn't initialize HistoryManager.", e);
+              onHistoryManagerReady();
+           }
 		},
 
-		initUI: function()
-		{
-			if (this.options.style === "alfresco")
-				this.initAlfrescoUI();
-			else
-				this.initOpenwayUI();
-		},
-				
-		initOpenwayUI: function()
-		{
+		initUI: function() {
+			
 			// Display the toolbar now that we have selected the filter
 			// Dom.removeClass(Selector.query(".task-list div", this.id, true), "hidden");
 			var colDefs = this._createColumnDefinitions();
@@ -318,25 +337,6 @@ if (typeof Openway == "undefined" || !Openway) {
 				}
 				
 			});
-			this.widgets.pagingDataTable.setFilterState = function DataTable_setFilterState(filterState) {
-		         
-		         if (typeof filterState == "string") {
-		        	 filterState = filterState.indexOf(",") > 0 ? filterState.split(",") : [filterState]; 
-		         }
-
-		         this.currentFilter = [];
-		         for (var i = 0; i < filterState.length; i++) {
-			         var filter = {};
-			         if (filterState[i].indexOf("|") > 0) {
-			            var filterTokens = filterState[i].split("|");
-			            filter.filterId = filterTokens[0];
-			            filter.filterData = filterTokens.slice(1).join("|"); // Make sure '|' characters in the data value remains
-			         } else {
-			            filter.filterId = filterState[i].length > 0 ? filterState[i] : undefined;
-			         }
-			         this.currentFilter.push(filter);
-		         }
-		      };
 			
 			var me = this;
 			var dataTable = this.widgets.pagingDataTable.getDataTable();
@@ -345,15 +345,13 @@ if (typeof Openway == "undefined" || !Openway) {
 			var original_doBeforeLoadData = dataTable.doBeforeLoadData;
 			
 
-			var sort = this.options.order.sort.replace(":", "_"),
-				sSortDir = this.options.order.dir;
+			var sort = this.options.order.sort.replace(":", "_");
 			sort = dataTable.getColumn(sort);
-			
-			if (!sSortDir) { 
-				sSortDir = "asc";
+			if (sort) {
+				var sSortDir = this.options.order.dir ? this.options.order.dir : "asc";
+				sSortDir = "yui-dt-" + sSortDir;
+		        Dom.addClass(sort.getColEl(), sSortDir);
 			}
-			sSortDir = "yui-dt-" + sSortDir;
-	        Dom.addClass(sort.getColEl(), sSortDir);
 			
 			dataTable.sortColumn = function(oColumn) {
 				if(oColumn && (oColumn instanceof YAHOO.widget.Column)) {
@@ -389,8 +387,11 @@ if (typeof Openway == "undefined" || !Openway) {
 		                    oState.pagination.recordOffset = 0;
 		                }
 		                
-		                dataTable.taskList.options.order.sort = oColumn.key;
-		                dataTable.taskList.options.order.dir = sSortDir.replace("yui-dt-", "");
+		                me.preferences.order.sort = dataTable.taskList.options.order.sort = oColumn.key;
+		                me.preferences.order.dir = dataTable.taskList.options.order.dir = sSortDir.replace("yui-dt-", "");
+
+		                me.services.preferences.set(PREFERENCES_MY_TASKS_ORDER_SORT, dataTable.taskList.options.order.sort);
+						me.services.preferences.set(PREFERENCES_MY_TASKS_ORDER_DIR, dataTable.taskList.options.order.dir);
 
 		                var dataSource = dataTable.taskList.widgets.pagingDataTable.widgets.dataSource;
 		                dataSource.liveData = dataTable.taskList.getDataSourceURL();
@@ -401,8 +402,7 @@ if (typeof Openway == "undefined" || !Openway) {
 			             
 		                dataTable.taskList.widgets.pagingDataTable.reloadDataTable();
 		                
-		                
-			            this.fireEvent("columnSortEvent",{column:oColumn,dir:sSortDir});
+			            this.fireEvent("columnSortEvent",{column:oColumn, dir:sSortDir});
 			            return;
 			        }
 			    }
@@ -440,16 +440,13 @@ if (typeof Openway == "undefined" || !Openway) {
 	            this.selectedItems[id] = e.target.checked;
 	            YAHOO.Bubbling.fire("selectedItemsChanged");
 	        }, this, true);
-
+	        
 		},
 
 		_createColumnDefinitions : function () {
 			var props = [];
 			for( var p in this.options.taskProps ) {
 				props.push(this.options.taskProps[p]);
-			}
-			for( var p in this.options.extProps ) {
-				props.push(this.options.extProps[p]);
 			}
 
 			var columns = this.options.columns;
@@ -626,57 +623,6 @@ if (typeof Openway == "undefined" || !Openway) {
 				this.createAction(elCell, this.msg("link.viewWorkflowDiagram"), "workflow-view-diagram", function () { this.viewWorkflowDiagram(oRecord); });
 			}
 		},
-				
-		initAlfrescoUI: function()
-		{
-			// Display the toolbar now that we have selected the filter
-			Dom.removeClass(Selector.query(".task-list div", this.id, true), "hidden");
-
-			this.widgets.pagingDataTable = new Alfresco.util.DataTable(
-			{
-				dataTable:
-				{
-					container: this.id + "-tasks",
-					columnDefinitions:
-					[
-						{key: "id", sortable: false, formatter: this.bind(this.renderCellIcons), width: 40},
-						{key: "title", sortable: false, formatter: this.bind(this.renderCellTaskInfo)},
-						{key: "name", sortable: false, formatter: this.bind(this.renderCellActions), width: 200}
-					],
-					config:
-					{
-						MSG_EMPTY: this.msg("message.noTasks")
-					}
-				},
-				dataSource:
-				{
-					url: this.getDataSourceURL(),
-					defaultFilter:
-					{
-						filterId: "workflows.active"
-					},
-					filterResolver: this.bind(function(filter)
-					{
-						// Reuse method form WorkflowActions
-						return this.createFilterURLParameters(filter, this.options.filterParameters);
-					})
-				},
-				paginator:
-				{
-					config:
-					{
-						containers: [this.id + "-paginator", this.id + "-paginatorBottom"],
-						rowsPerPage: this.options.maxItems
-					}
-				}
-			});
-		},
-		
-//		getReqParameters: function()
-//		{
-//			var parameters = this.options.sorters[this.widgets.sorterMenuButton.value];
-//			return parameters;
-//		},
 		
 		getDataSourceURL: function()
 		{
@@ -694,29 +640,6 @@ if (typeof Openway == "undefined" || !Openway) {
 					dir: this.options.order.dir
 				});
 			return Alfresco.constants.PROXY_URI + webscript; // + '&' + this.getReqParameters();
-		},
-		
-		/**
-		 * Resorts the list with the new sorter and updates the sorter menu button's label
-		 *
-		 * @param p_sType {string} The event
-		 * @param p_aArgs {array} Event arguments
-		 */
-		onSorterSelected: function MyTasks_onSorterSelected(p_sType, p_aArgs)
-		{
-			var menuItem = p_aArgs[1];
-
-			if (menuItem)
-			{
-//				this.widgets.sorterMenuButton.set("label", menuItem.cfg.getProperty("text"));
-//				this.widgets.sorterMenuButton.value = menuItem.value;
-
-				this.widgets.pagingDataTable.widgets.dataSource.liveData = this.getDataSourceURL();
-				this.widgets.pagingDataTable.loadDataTable(/*this.getReqParameters()*/);
-
-				// Save preferences
-				this.services.preferences.set(PREFERENCES_MY_TASKS_SORTER, menuItem.value);
-			}
 		},
 		
 		onTableReload: function()
@@ -833,12 +756,12 @@ if (typeof Openway == "undefined" || !Openway) {
 		onFilterTasksChanged : function _onFilterTasksChanged(layer, args) {
 			this.selectedItems = {};
 			
-			var toolbar = this.id.replace("_list_", "_filter-mgr_");
-			toolbar = Alfresco.util.ComponentManager.get(toolbar);
+			var filterMgr = this.id.replace("_list_", "_filter-mgr_");
+			filterMgr = Alfresco.util.ComponentManager.get(filterMgr);
 			
 			var taskType = null;
-			for (var i = 0; i < toolbar.options.currentFilter.length; i++) {
-				var filter = toolbar.options.currentFilter[i];
+			for (var i = 0; i < filterMgr.options.currentFilter.length; i++) {
+				var filter = filterMgr.options.currentFilter[i];
 				if(filter.indexOf("task-type|")==0) {
 					taskType = filter.replace("task-type|", "");
 				}
@@ -854,12 +777,23 @@ if (typeof Openway == "undefined" || !Openway) {
 						if (response.json !== undefined) {
 							this.options.taskProps = response.json.columns;
 							this.options.columns = [];
+							
+							var preferredSorter = false;
 							for (i = 0; i < this.options.taskProps.length; i++) {
-								this.options.columns.push(this.options.taskProps[i].prop);
+								var prop = this.options.taskProps[i].prop;
+								this.options.columns.push(prop);
+								preferredSorter |= this.preferences.order.sort == prop;
 							}
-							this.options.order.sort = response.json.columns[0].prop;
-							this.options.order.dir  = "desc";
-							this.initOpenwayUI();
+							
+							if (preferredSorter) {
+								this.options.order.sort = this.preferences.order.sort;
+								this.options.order.dir  = this.preferences.order.dir;
+							} else {
+								this.options.order.sort = response.json.columns[0].prop;
+								this.options.order.dir  = "desc";
+							}
+							
+							this.initUI();
 		                }
 					},
 					scope : this

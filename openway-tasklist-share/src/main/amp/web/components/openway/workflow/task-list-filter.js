@@ -5,6 +5,14 @@ if (typeof Openway == "undefined" || !Openway) {
 (function() {
 
 	/**
+	 * Preferences
+	 */
+	var PREFERENCES_MY_TASKS = "it.iopenway.share.my.tasks";
+	var PREFERENCES_MY_TASKS_FILTER = PREFERENCES_MY_TASKS + ".filter";
+	var PREFERENCES_MY_TASKS_ORDER_SORT = PREFERENCES_MY_TASKS + ".sort";
+	var PREFERENCES_MY_TASKS_ORDER_DIR = PREFERENCES_MY_TASKS + ".dir";
+	
+	/**
 	 * Openway.component.TaskListFilterManager constructor.
 	 *
 	 * @param name {String} The name of the component
@@ -32,21 +40,28 @@ if (typeof Openway == "undefined" || !Openway) {
 			onReady : function FilterManager_onReady() {
 				var me = this;
 
+				// Services
+				this.services.preferences = new Alfresco.service.Preferences();
+
 				this.widgets.filterButton =  Alfresco.util.createYUIButton(this, "filter-button", this._onFilterClick);
 				this.widgets.clearButton =  Alfresco.util.createYUIButton(this, "clear-button", this._onClearClick);
 
 				var workflowTypeId =  this.id.replace('_filter-mgr_', '_workflow-type-filter_') + '-select';
 				var taskTypeId =  this.id.replace('_filter-mgr_', '_task-type-filter_') + '-select';
 				YAHOO.util.Event.onContentReady(workflowTypeId, function() {
-					new YAHOO.util.Element(workflowTypeId).on("change", function() { me._onWorkflowTypeChange(workflowTypeId, taskTypeId) });
-					me._onWorkflowTypeChange(workflowTypeId, taskTypeId);
+					new YAHOO.util.Element(workflowTypeId).on("change", function() { 
+						var workflowType = Dom.get(workflowTypeId).value;
+						me._onWorkflowTypeChange(taskTypeId, workflowType, null) 
+					});
+
+					var workflowType = Dom.get(workflowTypeId).value;
+					me._onWorkflowTypeChange(taskTypeId, workflowType, null);
 				}, this, true);
 				
 				this._clear();
 			},
 			
-			_onWorkflowTypeChange : function (workflowTypeId, taskTypeId) {
-				var workflowType = Dom.get(workflowTypeId).value;
+			_onWorkflowTypeChange : function (taskTypeId, workflowType, value) {
 				var taskTypeEl = Dom.get(taskTypeId);
 				for(i = taskTypeEl.options.length-1; i >= 0; i--) {
 					taskTypeEl.remove(i);
@@ -66,7 +81,13 @@ if (typeof Openway == "undefined" || !Openway) {
 								    option.text = response.json.taskTypes[i].label;
 								    option.value = response.json.taskTypes[i].value;
 								    Dom.addClass(option, "task-type");
-								    if (i == 0) {
+								    
+								    if (value) {
+								    	if (value == option.value) {
+									    	option.selected = true;
+								    	}
+								    } 
+								    else if (i == 0) {
 								    	option.selected = true;
 								    }
 								    taskTypeEl.add(option, 0);
@@ -126,11 +147,60 @@ if (typeof Openway == "undefined" || !Openway) {
 			
 			_refresh : function (query) {
 				this.options.currentFilter = query;
+				this.services.preferences.set(PREFERENCES_MY_TASKS_FILTER, query ? query.toString() : "");
+				this.services.preferences.set(PREFERENCES_MY_TASKS_ORDER_SORT, "");
+				this.services.preferences.set(PREFERENCES_MY_TASKS_ORDER_DIR, "desc");
 
 				YAHOO.Bubbling.fire("filterTasksChanged");
 				
 				YAHOO.util.History.multiNavigate({'filter': query});
-			}
+			},
 
+			_loadCurrentFilters : function () {
+				
+				var filter = {};
+				for (i = 0; i < this.options.currentFilter.length; i++) {
+					var keyValue = this.options.currentFilter[i].split("|");
+					filter[keyValue[0]] = keyValue[1];
+				}
+
+				var registry = Openway.component.TaskListFilterManagerRegistry;
+
+				for (i = 0; i < registry.length && filter["workflow-type"]; i++) {
+					if (registry[i].filter == "task-type") {
+						var taskTypeId =  this.id.replace('_filter-mgr_', '_task-type-filter_') + '-select';
+						this._onWorkflowTypeChange(taskTypeId, filter["workflow-type"], filter["task-type"]);
+						break;
+					}
+				}
+				
+				for (i = 0; i < registry.length; i++) {
+					var element = Dom.get(registry[i].element);
+					var filterId = registry[i].filter;
+					var value = filter[filterId];
+					
+					if (registry[i].filter == "task-type") {
+						// Do nothing...
+					}
+					else if (element.id.indexOf('-check') > 0) {
+						element.checked = value && value != "*";
+
+					} else if (element.id.indexOf('-select') > 0) {
+						var index = 0;
+						if (value) {
+							for (j = 0; j < element.options.length; j++) {
+								if (value == element.options[j].value) {
+									index = j;
+								}
+							}
+						}
+						element.selectedIndex = index;
+
+					} else {
+						element.value = value;
+					}
+				}
+			}
+			
 		});
 })();

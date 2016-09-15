@@ -7,5 +7,5 @@
 //}
 
 var myTasksWidget = widgetUtils.findObject(model.jsonModel, "id", "HEADER_MY_TASKS");
-myTasksWidget.config.targetUrl = "iopenway-my-tasks#filter=workflows|active";
+myTasksWidget.config.targetUrl = "iopenway-my-tasks";
 	
