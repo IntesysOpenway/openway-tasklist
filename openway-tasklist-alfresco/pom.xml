@@ -268,16 +268,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>de.fme.jsconsole</groupId>
-			<artifactId>javascript-console-repo</artifactId>
-			<classifier>${javascript-console.classifier}</classifier>
-		</dependency>
-		<dependency>
-			<groupId>it.iopenway</groupId>
-			<artifactId>openway-alfext-alfresco</artifactId>
-			<classifier>jar</classifier>
-		</dependency>
-		<dependency>
 			<!-- Necessaria per rimuovere errori con "install amp-to-war" -->
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>

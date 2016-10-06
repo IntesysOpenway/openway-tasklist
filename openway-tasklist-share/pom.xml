@@ -263,16 +263,6 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>de.fme.jsconsole</groupId>
-			<artifactId>javascript-console-share</artifactId>
-			<classifier>${javascript-console.classifier}</classifier>
-		</dependency>
-		<dependency>
-			<groupId>it.iopenway</groupId>
-			<artifactId>openway-alfext-share</artifactId>
-			<classifier>jar</classifier>
-		</dependency>
 	</dependencies>
 
 </project>

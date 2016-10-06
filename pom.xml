@@ -26,10 +26,7 @@
 
 		<!-- Artifacts Version -->
 		<junit.version>4.11</junit.version>
-		<javascript-console.version>0.5.1</javascript-console.version>
-		<javascript-console.classifier>alfresco-4-0-x</javascript-console.classifier>
 		<jcl-over-slf4j.version>1.5.11</jcl-over-slf4j.version>
-		<openway-alfext.version>4.2.4.1.2</openway-alfext.version>
 
 		<!-- Plugins Version -->
 		<assembly-plugin.version>2.4</assembly-plugin.version>
@@ -105,30 +102,6 @@
 				<artifactId>junit</artifactId>
 				<version>${junit.version}</version>
 				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>de.fme.jsconsole</groupId>
-				<artifactId>javascript-console-repo</artifactId>
-				<version>${javascript-console.version}</version>
-				<classifier>${javascript-console.classifier}</classifier>
-			</dependency>
-			<dependency>
-				<groupId>de.fme.jsconsole</groupId>
-				<artifactId>javascript-console-share</artifactId>
-				<version>${javascript-console.version}</version>
-				<classifier>${javascript-console.classifier}</classifier>
-			</dependency>
-			<dependency>
-				<groupId>it.iopenway</groupId>
-				<artifactId>openway-alfext-alfresco</artifactId>
-				<version>${openway-alfext.version}</version>
-				<classifier>jar</classifier>
-			</dependency>
-			<dependency>
-				<groupId>it.iopenway</groupId>
-				<artifactId>openway-alfext-share</artifactId>
-				<version>${openway-alfext.version}</version>
-				<classifier>jar</classifier>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
