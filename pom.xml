@@ -35,16 +35,11 @@
 		<maven-scm-plugin.version>1.9.2</maven-scm-plugin.version>
 		<proguard-plugin.version>2.0.8</proguard-plugin.version>
 		<yuicompressor-plugin.version>1.1</yuicompressor-plugin.version>
-
-		<!-- SVN URLs -->
-		<scm-project-trunk.url>http://172.28.13.245/svn/alfresco/moduli/openway-tasklist/trunk/</scm-project-trunk.url>
-		<scm-project-branch.url>http://172.28.13.245/svn/alfresco/moduli/openway-tasklist/branches/</scm-project-branch.url>
-		<scm-project-tag.url>http://172.28.13.245/svn/alfresco/moduli/openway-tasklist/tags/</scm-project-tag.url>
 	</properties>
 
 	<scm>
-		<!-- URL to SVN folder that contains this pom -->
-		<developerConnection>scm:svn:${scm-project-trunk.url}</developerConnection>
+		<!-- URL to GIT folder that contains this pom -->
+		<developerConnection>scm:git:git@gitlab.intesys.it:openway/openway-tasklist.git</developerConnection>
 	</scm>
 
 	<distributionManagement>
