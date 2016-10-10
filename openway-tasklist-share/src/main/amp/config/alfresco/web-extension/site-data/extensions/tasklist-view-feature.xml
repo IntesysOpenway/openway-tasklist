@@ -1,0 +1,20 @@
+<extension>
+	<modules>
+		<module>
+			<id>openway-tasklist-extension</id>
+			<auto-deploy>true</auto-deploy>
+      		<version>1.0</version>
+			<customizations>
+				<customization>
+					<targetPackageRoot>org.alfresco.share.header</targetPackageRoot>
+					<sourcePackageRoot>it.iopenway.customizations.share.tasklist-share-header</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.workflow</targetPackageRoot>
+					<sourcePackageRoot>it.iopenway.customizations.tasklist-workflow</sourcePackageRoot>
+				</customization>
+			</customizations>
+		</module>
+
+	</modules>
+</extension>

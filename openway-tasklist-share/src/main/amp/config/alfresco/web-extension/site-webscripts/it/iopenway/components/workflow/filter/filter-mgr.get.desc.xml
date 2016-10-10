@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>Filter Manager</shortname>
+  <description>Filter Manager</description>
+  <url>/components/iopenway/workflow/filter/filter-mgr</url>
+</webscript>

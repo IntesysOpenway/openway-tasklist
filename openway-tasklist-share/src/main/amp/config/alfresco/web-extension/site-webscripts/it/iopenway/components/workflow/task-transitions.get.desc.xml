@@ -1,0 +1,6 @@
+<webscript>
+	<shortname>Task List</shortname>
+	<description>Component for displaying the user's task transitions</description>
+	<url>/components/iopenway/workflow/task-transitions</url>
+	<format default="json">argument</format>
+</webscript>

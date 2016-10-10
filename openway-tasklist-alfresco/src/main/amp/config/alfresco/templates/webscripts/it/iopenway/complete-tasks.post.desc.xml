@@ -1,0 +1,7 @@
+<webscript>
+   <shortname>Intesys Openway - Complete Tasks</shortname>
+   <description>Complete all selected tasks with the given transaction value.</description>
+   <url>/it/iopenway/complete-tasks</url>
+   <format default="json"/>
+   <authentication runas="admin">user</authentication>
+</webscript>

@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.alfresco.maven</groupId>
+		<artifactId>alfresco-sdk-parent</artifactId>
+		<version>1.1.1</version>
+	</parent>
+
+	<groupId>it.iopenway</groupId>
+	<artifactId>openway-tasklist</artifactId>
+	<version>4.2.4.1.2-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>Intesys Openway Tasklist</name>
+	<description>Intesys Openway Tasklist</description>
+
+	<properties>
+
+		<!-- Alfresco SDK Properties -->
+		<alfresco.groupId>org.alfresco</alfresco.groupId>
+		<alfresco.version>4.2.e</alfresco.version>
+		<module.repo.version.min>4.2.0</module.repo.version.min>
+		<app.log.root.level>WARN</app.log.root.level>
+
+		<!-- Artifacts Version -->
+		<junit.version>4.11</junit.version>
+		<jcl-over-slf4j.version>1.5.11</jcl-over-slf4j.version>
+
+		<!-- Plugins Version -->
+		<assembly-plugin.version>2.4</assembly-plugin.version>
+		<shade-plugin.version>2.1</shade-plugin.version>
+		<release-plugin.version>2.5.1</release-plugin.version>
+		<maven-scm-plugin.version>1.9.2</maven-scm-plugin.version>
+		<proguard-plugin.version>2.0.8</proguard-plugin.version>
+		<yuicompressor-plugin.version>1.1</yuicompressor-plugin.version>
+
+		<!-- SVN URLs -->
+		<scm-project-trunk.url>http://172.28.13.245/svn/alfresco/moduli/openway-tasklist/trunk/</scm-project-trunk.url>
+		<scm-project-branch.url>http://172.28.13.245/svn/alfresco/moduli/openway-tasklist/branches/</scm-project-branch.url>
+		<scm-project-tag.url>http://172.28.13.245/svn/alfresco/moduli/openway-tasklist/tags/</scm-project-tag.url>
+	</properties>
+
+	<scm>
+		<!-- URL to SVN folder that contains this pom -->
+		<developerConnection>scm:svn:${scm-project-trunk.url}</developerConnection>
+	</scm>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>iopenway</id>
+			<url>http://172.28.13.245:8080/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+		<repository>
+			<id>iopenway</id>
+			<url>http://172.28.13.245:8080/nexus/content/repositories/releases/</url>
+		</repository>
+	</distributionManagement>
+
+	<dependencyManagement>
+		<dependencies>
+
+			<!-- Alfresco SDK dependecies -->
+			<dependency>
+				<groupId>${alfresco.groupId}</groupId>
+				<artifactId>alfresco-platform-distribution</artifactId>
+				<version>${alfresco.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>${alfresco.groupId}</groupId>
+				<artifactId>alfresco-share</artifactId>
+				<version>${alfresco.version}</version>
+				<scope>provided</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>org.alfresco</groupId>
+						<artifactId>alfresco-web-framework-commons</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<!-- Overrinding gestione SDK per poter usare quello con patch del nexus 
+					di OpenWay -->
+				<groupId>${alfresco.groupId}</groupId>
+				<artifactId>alfresco-repository</artifactId>
+				<version>${alfresco.version}</version>
+				<scope>compile</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>*</groupId>
+						<artifactId>*</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<!-- Other dependencies -->
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>${jcl-over-slf4j.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<!-- Project Module Dependencies -->
+
+		</dependencies>
+	</dependencyManagement>
+
+	<!-- Build -->
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-shade-plugin</artifactId>
+					<version>${shade-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>${assembly-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>com.github.wvengen</groupId>
+					<artifactId>proguard-maven-plugin</artifactId>
+					<version>${proguard-plugin.version}</version>
+					<configuration>
+						<proguardVersion>4.11</proguardVersion>
+						<obfuscate>true</obfuscate>
+						<options>
+							<option>-ignorewarnings</option>
+							<option>-dontoptimize</option>
+							<option>-keepdirectories</option>
+						</options>
+						<libs>
+							<lib>${java.home}/lib/rt.jar</lib>
+							<lib>${java.home}/lib/jce.jar</lib>
+							<lib>${java.home}/lib/jsse.jar</lib>
+						</libs>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>net.sf.proguard</groupId>
+							<artifactId>proguard-base</artifactId>
+							<version>4.11</version>
+							<scope>runtime</scope>
+							<optional>true</optional>
+						</dependency>
+					</dependencies>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>${release-plugin.version}</version>
+					<configuration>
+						<tagBase>${scm-project-tag.url}</tagBase>
+						<arguments>-Dobfuscate=true</arguments>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-scm-plugin</artifactId>
+					<version>${maven-scm-plugin.version}</version>
+					<configuration>
+						<connectionType>developerConnection</connectionType>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>net.alchim31.maven</groupId>
+					<artifactId>yuicompressor-maven-plugin</artifactId>
+					<version>${yuicompressor-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<!-- Above build-helper-maven-plugin gives a validation error in m2e. 
+						To fix that, add the plugin management step below. Per: http://stackoverflow.com/a/12109018 -->
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.codehaus.mojo</groupId>
+										<artifactId>build-helper-maven-plugin</artifactId>
+										<versionRange>${maven.buildhelper.version}</versionRange>
+										<goals>
+											<goal>add-test-resource</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute />
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.alfresco.maven.plugin</groupId>
+										<artifactId>alfresco-maven-plugin</artifactId>
+										<versionRange>[1.1.1,)</versionRange>
+										<goals>
+											<goal>set-version</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+
+				<!-- I file binari non vanno codificati in UTF-8 -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<configuration>
+						<encoding>${project.build.sourceEncoding}</encoding>
+						<nonFilteredFileExtensions combine.children="append">
+							<nonFilteredFileExtension>jar</nonFilteredFileExtension>
+							<nonFilteredFileExtension>pdf</nonFilteredFileExtension>
+							<nonFilteredFileExtension>swf</nonFilteredFileExtension>
+							<nonFilteredFileExtension>zip</nonFilteredFileExtension>
+							<nonFilteredFileExtension>bz2</nonFilteredFileExtension>
+							<nonFilteredFileExtension>gz</nonFilteredFileExtension>
+							<nonFilteredFileExtension>acp</nonFilteredFileExtension>
+							<nonFilteredFileExtension>bin</nonFilteredFileExtension>
+							<nonFilteredFileExtension>odt</nonFilteredFileExtension>
+							<nonFilteredFileExtension>doc</nonFilteredFileExtension>
+							<nonFilteredFileExtension>xls</nonFilteredFileExtension>
+							<nonFilteredFileExtension>jasper</nonFilteredFileExtension>
+							<nonFilteredFileExtension>ks</nonFilteredFileExtension>
+							<nonFilteredFileExtension>jks</nonFilteredFileExtension>
+							<nonFilteredFileExtension>so</nonFilteredFileExtension>
+							<nonFilteredFileExtension>dll</nonFilteredFileExtension>
+							<nonFilteredFileExtension>jnilib</nonFilteredFileExtension>
+						</nonFilteredFileExtensions>
+					</configuration>
+				</plugin>
+
+				<!-- Configures tomcat with proper deps and performance fixes -->
+				<plugin>
+					<groupId>org.apache.tomcat.maven</groupId>
+					<artifactId>tomcat7-maven-plugin</artifactId>
+					<version>${maven.tomcat.version}</version>
+					<configuration>
+						<useSeparateTomcatClassLoader>true</useSeparateTomcatClassLoader>
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>postgresql</groupId>
+							<artifactId>postgresql</artifactId>
+							<version>9.1-901.jdbc4</version>
+						</dependency>
+						<dependency>
+							<groupId>com.h2database</groupId>
+							<artifactId>h2</artifactId>
+							<version>${h2.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>tk.skuro.alfresco</groupId>
+							<artifactId>h2-support</artifactId>
+							<version>${h2-support.version}</version>
+						</dependency>
+						<!-- Major performance improvement, see http://mindthegab.com/2013/06/20/maven-is-not-so-evil-plexus-archives-2-3-is-a-life-saver-for-the-speed-of-your-war-development-with-maven/ -->
+						<dependency>
+							<groupId>org.codehaus.plexus</groupId>
+							<artifactId>plexus-archiver</artifactId>
+							<version>2.3</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-scm-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+  <modules>
+    <module>openway-tasklist-alfresco</module>
+    <module>openway-tasklist-share</module>
+  </modules>
+</project>

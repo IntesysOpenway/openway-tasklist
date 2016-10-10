@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>Due Filter</shortname>
+  <description>Due filter</description>
+  <url>/components/iopenway/workflow/filter/due</url>
+</webscript>

@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<template-instance>
+   <template-type>it/iopenway/my-tasks</template-type>
+   <components>
+
+      <!-- Filters -->
+      <component>
+         <region-id>all-filter</region-id>
+         <url>/components/iopenway/workflow/filter/all</url>
+         <properties>
+            <mode>tasks</mode>
+         </properties>
+      </component>
+      <component>
+         <region-id>due-filter</region-id>
+         <url>/components/iopenway/workflow/filter/due</url>
+      </component>
+      <component>
+         <region-id>initiator-filter</region-id>
+         <url>/components/iopenway/workflow/filter/initiator</url>
+      </component>
+      <component>
+         <region-id>workflow-type-filter</region-id>
+         <url>/components/iopenway/workflow/filter/workflow-type</url>
+      </component>
+      <component>
+         <region-id>task-type-filter</region-id>
+         <url>/components/iopenway/workflow/filter/task-type</url>
+      </component>
+      <component>
+         <region-id>filter-mgr</region-id>
+         <url>/components/iopenway/workflow/filter/filter-mgr</url>
+      </component>
+
+      <!-- Toolbar -->
+      <component>
+         <region-id>toolbar</region-id>
+         <url>/components/iopenway/workflow/task-list-toolbar</url>
+      </component>
+
+      <!-- List -->
+      <component>
+         <region-id>list</region-id>
+         <url>/components/iopenway/workflow/task-list</url>
+      </component>
+
+   </components>
+</template-instance>
