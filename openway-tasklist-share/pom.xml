@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>it.iopenway</groupId>
 		<artifactId>openway-tasklist</artifactId>
-		<version>4.2.4.1.2-SNAPSHOT</version>
+		<version>5.1.6.1.2-SNAPSHOT</version>
 	</parent>
 	<artifactId>openway-tasklist-share</artifactId>
 	<packaging>amp</packaging>
@@ -25,46 +25,22 @@
 		<alfresco.db.url>jdbc:postgresql://localhost:5432/${alfresco.db.name}</alfresco.db.url>
 		<alfresco.db.datasource.class>org.postgresql.Driver</alfresco.db.datasource.class>
 
-		<!-- Defines the target WAR artifactId to run this amp, only used with 
-			the -Pamp-to-war switch . | Allowed values: alfresco | share. Defaults to 
-			a repository AMP, but could point to your foundation WAR -->
+		<!-- Defines the target WAR artifactId to run this amp, only used with the -Pamp-to-war switch . | Allowed values: alfresco | share. Defaults to a repository AMP, 
+			but could point to your foundation WAR -->
 		<alfresco.client.war>share</alfresco.client.war>
 
-		<!-- Defines the target WAR groupId to run this amp, only used with the 
-			-Pamp-to-war switch . | Could be org.alfresco | org.alfresco.enterprise or 
-			your corporate groupId -->
+		<!-- Defines the target WAR groupId to run this amp, only used with the -Pamp-to-war switch . | Could be org.alfresco | org.alfresco.enterprise or your corporate 
+			groupId -->
 		<alfresco.client.war.groupId>org.alfresco</alfresco.client.war.groupId>
 
-		<!-- Defines the target WAR version to run this amp, only used with the 
-			-Pamp-to-war switch -->
-		<alfresco.client.war.version>4.2.e</alfresco.client.war.version>
+		<!-- Defines the target WAR version to run this amp, only used with the -Pamp-to-war switch -->
+		<alfresco.client.war.version>5.1.f</alfresco.client.war.version>
 
-		<noSnapshotVersion>4.2.4.1.0-SNAPSHOT</noSnapshotVersion>
-		
 		<!-- Tomcat properties -->
 		<maven.tomcat.port>8080</maven.tomcat.port>
 	</properties>
 
 	<build>
-		<plugins>
-			<!-- TODO completare plugin di minificazione perche' non riuscivo ad escludere 
-				la path config la quale non va minificata a causa di errori nel compressore 
-				js. Lato server ci sono dei tag (es. <import resource...> ) non accettati 
-				dal compressore js. -->
-			<!-- <plugin> -->
-			<!-- <groupId>net.alchim31.maven</groupId> -->
-			<!-- <artifactId>yuicompressor-maven-plugin</artifactId> -->
-			<!-- <executions> -->
-			<!-- <execution> -->
-			<!-- <phase>package</phase> -->
-			<!-- <goals> -->
-			<!-- <goal>compress</goal> -->
-			<!-- </goals> -->
-			<!-- </execution> -->
-			<!-- </executions> -->
-			<!-- </plugin> -->
-		</plugins>
-
 		<!-- Overrinding Resources of parent pom -->
 		<resources>
 			<resource>
@@ -78,15 +54,13 @@
 				<excludes>
 					<!-- Esclusione file autogenerati da Eclipse -->
 					<exclude>**/*.jsfdia</exclude>
-					<!-- Esclusione file che utilizzano marcatori simili a quelli usati 
-						da maven -->
+					<!-- Esclusione file che utilizzano marcatori simili a quelli usati da maven -->
 					<exclude>**/*.ftl</exclude>
 					<exclude>**/*.jasper</exclude>
 				</excludes>
 			</resource>
 			<resource>
-				<!-- Inclusione delle risorse che utilizzano marcatori simili a quelli 
-					usati da maven mettendo il filtering a false, cosi' i tag non vengono rimpiazzati -->
+				<!-- Inclusione delle risorse che utilizzano marcatori simili a quelli usati da maven mettendo il filtering a false, cosi' i tag non vengono rimpiazzati -->
 				<directory>${app.amp.folder}</directory>
 				<targetPath>${app.amp.output.folder}</targetPath>
 				<filtering>false</filtering>
@@ -99,8 +73,7 @@
 	</build>
 
 	<profiles>
-		<!-- Profilo attivato ogni volta che la property obfuscate non è dichiarata. 
-			Non offusca i sorgenti. -->
+		<!-- Profilo attivato ogni volta che la property obfuscate non è dichiarata. Non offusca i sorgenti. -->
 		<profile>
 			<id>iopenway-no-obfuscate-profile</id>
 			<activation>
@@ -110,9 +83,7 @@
 			</activation>
 			<build>
 				<plugins>
-					<!-- Creazione del file jar del progetto in modo che oltre all'amp ci 
-						sia anche una dipendenza da usare in altri progetti. Il file generato ha 
-						classifier jar -->
+					<!-- Creazione del file jar del progetto in modo che oltre all'amp ci sia anche una dipendenza da usare in altri progetti. Il file generato ha classifier jar -->
 					<plugin>
 						<artifactId>maven-assembly-plugin</artifactId>
 						<executions>
@@ -134,8 +105,7 @@
 			</build>
 		</profile>
 
-		<!-- Profilo attivato ogni volta che la property obfuscate=true. I sorgenti 
-			vengono offuscati con proguard. -->
+		<!-- Profilo attivato ogni volta che la property obfuscate=true. I sorgenti vengono offuscati con proguard. -->
 		<profile>
 			<id>iopenway-obfuscate-profile</id>
 			<activation>
@@ -147,8 +117,7 @@
 			<build>
 				<pluginManagement>
 					<plugins>
-						<!-- In caso di offuscamento faccio pescare le classi compilate nella 
-							cartella dove sono gia' state offuscate. -->
+						<!-- In caso di offuscamento faccio pescare le classi compilate nella cartella dove sono gia' state offuscate. -->
 						<plugin>
 							<groupId>org.alfresco.maven.plugin</groupId>
 							<artifactId>alfresco-maven-plugin</artifactId>
@@ -210,7 +179,8 @@
 									{
 									static final long serialVersionUID;
 									private static final
-									java.io.ObjectStreamField[] serialPersistentFields;
+									java.io.ObjectStreamField[]
+									serialPersistentFields;
 									private void
 									writeObject(java.io.ObjectOutputStream);
 									private void
@@ -222,9 +192,7 @@
 						</configuration>
 					</plugin>
 
-					<!-- Creazione del file jar del progetto in modo che oltre all'amp ci 
-						sia anche una dipendenza da usare in altri progetti. Il file generato ha 
-						classifier jar -->
+					<!-- Creazione del file jar del progetto in modo che oltre all'amp ci sia anche una dipendenza da usare in altri progetti. Il file generato ha classifier jar -->
 					<plugin>
 						<artifactId>maven-assembly-plugin</artifactId>
 						<executions>
@@ -250,18 +218,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>${alfresco.groupId}</groupId>
-			<artifactId>alfresco-repository</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>${alfresco.groupId}</groupId>
-			<artifactId>alfresco-share</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
+			<artifactId>share</artifactId>
+			<classifier>classes</classifier>
 		</dependency>
 	</dependencies>
 
