@@ -759,9 +759,14 @@ if (typeof Openway == "undefined" || !Openway) {
 			var filterMgr = this.id.replace("_list_", "_filter-mgr_");
 			filterMgr = Alfresco.util.ComponentManager.get(filterMgr);
 			
+			var workflowType = null;
 			var taskType = null;
 			for (var i = 0; i < filterMgr.options.currentFilter.length; i++) {
 				var filter = filterMgr.options.currentFilter[i];
+
+				if(filter.indexOf("workflow-type|")==0) {
+					workflowType = filter.replace("workflow-type|", "");
+				}
 				if(filter.indexOf("task-type|")==0) {
 					taskType = filter.replace("task-type|", "");
 				}
@@ -771,7 +776,7 @@ if (typeof Openway == "undefined" || !Openway) {
 			// Recupera le colonne..
 			Alfresco.util.Ajax.jsonGet({
 				url : Alfresco.constants.URL_SERVICECONTEXT
-					+ "components/iopenway/workflow/task-columns?taskType=" + taskType,
+					+ "components/iopenway/workflow/task-columns?workflowType=" + workflowType + "&taskType=" + taskType,
 				successCallback : {
 					fn : function(response) {
 						if (response.json !== undefined) {
