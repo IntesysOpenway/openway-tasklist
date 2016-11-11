@@ -1,20 +1,10 @@
-<@markup id="css" >
-   <#-- CSS Dependencies -->
-   <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/dashlets/my-tasks.css" group="dashlets"  />
-</@>
 
-<@markup id="js">
+﻿<@markup id="openway-tasklist-js" target="js" action="after" scope="global">
    <#-- JavaScript Dependencies -->
-   <@script type="text/javascript" src="${url.context}/res/components/workflow/workflow-actions.js" group="dashlets"/>
-   <@script type="text/javascript" src="${url.context}/res/components/dashlets/my-tasks.js" group="dashlets"/>
-   <@script type="text/javascript" src="${url.context}/res/components/dashlets/ow-ext-my-tasks.js" group="dashlets"/>
+   <@script type="text/javascript" src="${url.context}/res/components/openway/dashlets/my-tasks.js" group="dashlets"/>
 </@>
 
-<@markup id="widgets">
-   <@createWidgets group="dashlets"/>
-</@>
-
-<@markup id="html">
+﻿<@markup id="openway-tasklist-html" target="html" action="replace" scope="global">
    <@uniqueIdDiv>
       <#assign id = args.htmlid?html>
       <div class="dashlet my-tasks">
@@ -33,7 +23,7 @@
                </select>
                <span class="align-right yui-button-align">
                   <span class="first-child">
-                     <a href="${url.context}/page/start-workflow?referrer=tasks" class="theme-color-1">
+                     <a href="${url.context}/page/start-workflow" class="theme-color-1">
                         <img src="${url.context}/res/components/images/workflow-16.png" style="vertical-align: text-bottom" width="16" />
                         ${msg("link.startWorkflow")}</a>
                   </span>
@@ -50,7 +40,7 @@
             </span>
             <div class="clear"></div>
          </div>
-         <div class="body scrollableList" <#if args.height??>style="height: ${args.height}px;"</#if>>
+         <div class="body scrollableList" <#if args.height??>style="height: ${args.height?html}px;"</#if>>
             <div id="${id}-tasks"></div>
          </div>
       </div>

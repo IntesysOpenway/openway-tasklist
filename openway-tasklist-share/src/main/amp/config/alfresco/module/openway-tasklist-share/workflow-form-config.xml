@@ -1,0 +1,27 @@
+<alfresco-config>
+
+   <!-- ************************************** -->
+   <!-- Workflow Definition Form Configuration -->
+   <!-- ************************************** -->
+
+   <!-- Activiti Workflow Definition -->
+   <config evaluator="string-compare" condition="activiti$activitiAdhoc">
+   		<task-types>
+			<task-type value="wf:adhocTask" label="Task" />
+			<task-type value="wf:completedAdhocTask" label="Compito completato" />
+			
+		</task-types>
+   </config>
+   
+   <config evaluator="string-compare" condition="wf:adhocTask">
+		<transitions>
+			<options>Next|Compito eseguito</options>
+		</transitions>
+		<properties>
+			<property name="bpm_description" width="0" formatter="renderTitleCell" />
+			<property name="bpm_startDate" width="100" formatter="renderDateCell" />
+			<property name="bpm_status" width="120" formatter="renderTextCell" />
+		</properties>
+   </config>
+   	
+</alfresco-config>

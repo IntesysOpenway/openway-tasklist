@@ -36,8 +36,6 @@
 		<!-- Defines the target WAR version to run this amp, only used with the -Pamp-to-war switch -->
 		<alfresco.client.war.version>5.1.g</alfresco.client.war.version>
 
-		<noSnapshotVersion>4.2.4.1.0-SNAPSHOT</noSnapshotVersion>
-
 		<!-- Tomcat properties -->
 		<maven.tomcat.port>9080</maven.tomcat.port>
 	</properties>

@@ -947,7 +947,7 @@ if (typeof Openway == "undefined" || !Openway) {
 		 */
 		viewWorkflowDiagram: function(oRecord) {
 			var diagramUrl = "api/workflow-instances/" + oRecord.getData('workflowInstance').id + "/diagram";
-			showLightbox({ src: Alfresco.constants.PROXY_URI + diagramUrl });
+			Alfresco.Lightbox.show({ src: Alfresco.constants.PROXY_URI + diagramUrl });
 		}
 
 	}, true
