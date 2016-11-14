@@ -7,14 +7,14 @@
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<fileSets>
 		<fileSet>
-			<directory>${project.build.directory}/${project.build.finalName}/config</directory>
+			<directory>${project.build.directory}/amp/config</directory>
 			<outputDirectory>/</outputDirectory>
 			<includes>
 				<include>**/*.*</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.build.directory}/${project.build.finalName}/web</directory>
+			<directory>${project.build.directory}/amp/web</directory>
 			<outputDirectory>/META-INF</outputDirectory>
 			<includes>
 				<include>**/*.*</include>
