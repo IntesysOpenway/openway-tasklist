@@ -306,9 +306,6 @@ if (typeof Openway == "undefined" || !Openway) {
 			var dataTable = this.widgets.pagingDataTable.getDataTable();
 			dataTable.taskList = me;
 			
-			var original_doBeforeLoadData = dataTable.doBeforeLoadData;
-			
-
 			var sort = this.options.order.sort.replace(":", "_");
 			sort = dataTable.getColumn(sort);
 			if (sort) {
@@ -370,32 +367,6 @@ if (typeof Openway == "undefined" || !Openway) {
 			            return;
 			        }
 			    }
-			};
-			
-			
-			dataTable.doBeforeLoadData = function(sRequest, oResponse, oPayload)
-			{				
-				if(Alfresco.constants.SITE !== "")
-				{
-					var resp = [];
-					for(var i = 0; i < oResponse.results.length; i++)
-					{
-						var our = false;
-						for(var j = 0; j < me.options.projectWorkflows.length; j++)
-						{
-							if( oResponse.results[i].workflowInstance.id 
-									=== me.options.projectWorkflows[j].workflow.id )
-							{
-								our = true
-							}
-						}
-						if(our)
-							resp.push(oResponse.results[i]);
-					}
-					oResponse.results = resp;
-				}
-				
-				return original_doBeforeLoadData.apply(this, arguments);
 			};
 
 	        // File checked handler
