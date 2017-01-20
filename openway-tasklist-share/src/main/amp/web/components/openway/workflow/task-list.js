@@ -156,44 +156,8 @@ if (typeof Openway == "undefined" || !Openway) {
 		 *
 		 * @method onReady
 		 */
-		onReady: function DL_onReady()
-		{
-			var me = this;
-			if( Alfresco.constants.SITE === "" )
-			{
-				this.loadPreferences();
-			}
-			else
-			{
-				var webscript = Alfresco.constants.PROXY_URI + 
-						YAHOO.lang.substitute("api/iopenway/project/{projectId}/workflows?exclude={exclude}",
-				{
-					projectId: encodeURIComponent(Alfresco.constants.SITE),
-					exclude: this.options.hiddenWorkflowsNames.join(",")
-				});
-				Alfresco.util.Ajax.jsonRequest({
-					url: webscript,
-					method: Alfresco.util.Ajax.GET,
-					successCallback:
-					{
-						fn: function(resp)
-						{
-							me.options.projectWorkflows = resp.json.data;
-							me.loadPreferences();
-						},
-						scope:this
-					},
-					failureCallback:
-					{
-						fn: function (resp)
-						{
-							if (resp.serverResponse.statusText)
-								Alfresco.util.PopupManager.displayMessage({ text: resp.serverResponse.statusText });
-						},
-						scope:this
-					}
-				});
-			}
+		onReady: function DL_onReady() {
+			this.loadPreferences();
 		},
 		
 		loadPreferences: function ()
