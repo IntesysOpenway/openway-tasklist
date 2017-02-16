@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>it.iopenway</groupId>
 		<artifactId>openway-alfresco-sdk-parent</artifactId>
-		<version>5.1.6.0</version>
+		<version>5.1.6.2</version>
 	</parent>
 
 	<artifactId>openway-tasklist</artifactId>
@@ -15,10 +15,25 @@
 	<name>Intesys Openway Tasklist</name>
 	<description>Intesys Openway Tasklist</description>
 
+	<inceptionYear>2016</inceptionYear>
+
 	<scm>
 		<!-- URL to GIT folder that contains this pom -->
 		<developerConnection>scm:git:git@gitlab.intesys.it:openway/openway-tasklist.git</developerConnection>
 	</scm>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<configuration combine.children="append">
+					<!-- Per questo progetto usiamo la licenza LGPLv3 -->
+					<licenseName>lgpl_v3</licenseName>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 	<modules>
 		<module>openway-tasklist-alfresco</module>
