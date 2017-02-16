@@ -35,13 +35,14 @@
 		<maven-scm-plugin.version>1.9.2</maven-scm-plugin.version>
 		<proguard-plugin.version>2.0.8</proguard-plugin.version>
 		<yuicompressor-plugin.version>1.1</yuicompressor-plugin.version>
+		<license-maven-plugin.version>1.12</license-maven-plugin.version>
 	</properties>
 
 	<scm>
 		<!-- URL to GIT folder that contains this pom -->
 		<developerConnection>scm:git:git@gitlab.intesys.it:openway/openway-tasklist.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 	<distributionManagement>
 		<snapshotRepository>
@@ -78,8 +79,7 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<!-- Overrinding gestione SDK per poter usare quello con patch del nexus 
-					di OpenWay -->
+				<!-- Overrinding gestione SDK per poter usare quello con patch del nexus di OpenWay -->
 				<groupId>${alfresco.groupId}</groupId>
 				<artifactId>alfresco-repository</artifactId>
 				<version>${alfresco.version}</version>
@@ -175,8 +175,7 @@
 					<version>${yuicompressor-plugin.version}</version>
 				</plugin>
 				<plugin>
-					<!-- Above build-helper-maven-plugin gives a validation error in m2e. 
-						To fix that, add the plugin management step below. Per: http://stackoverflow.com/a/12109018 -->
+					<!-- Above build-helper-maven-plugin gives a validation error in m2e. To fix that, add the plugin management step below. Per: http://stackoverflow.com/a/12109018 -->
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
 					<version>1.0.0</version>
@@ -274,6 +273,25 @@
 						</dependency>
 					</dependencies>
 				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>${license-maven-plugin.version}</version>
+					<configuration>
+						<licenseName>lgpl_v3</licenseName>
+						<processStartTag>==============================LICENSE=============================</processStartTag>
+						<processEndTag>============================LICENSE-END===========================</processEndTag>
+					</configuration>
+					<executions>
+						<execution>
+							<id>first</id>
+							<goals>
+								<goal>update-file-header</goal>
+							</goals>
+							<phase>process-sources</phase>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 
@@ -286,10 +304,14 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-scm-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</build>
-  <modules>
-    <module>openway-tasklist-alfresco</module>
-    <module>openway-tasklist-share</module>
-  </modules>
+	<modules>
+		<module>openway-tasklist-alfresco</module>
+		<module>openway-tasklist-share</module>
+	</modules>
 </project>
