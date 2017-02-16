@@ -15,6 +15,12 @@
 
 	<name>Intesys Openway Tasklist</name>
 	<description>Intesys Openway Tasklist</description>
+	
+	<organization>
+		<name>Intesys Openway Srl</name>
+		<url>http://www.iopenway.it/</url>
+	</organization>
+	<inceptionYear>2016</inceptionYear>
 
 	<properties>
 
