@@ -3,9 +3,6 @@ function getColumnConfig(itemId) {
 	logger.log("getColumnConfig");
 	
 	var response = [];
-	if (args.taskType==null) {
-		return response;
-	}
 	
 	// query for configuration for item
 	var nodeConfig = config.scoped[itemId];
@@ -34,9 +31,13 @@ function getColumnConfig(itemId) {
 }
 
 
-var response = getColumnConfig(args.taskType);
-
-logger.log(response.length);
+var response = [];
+if (args.taskType != null && args.taskType != "*") {
+	response = getColumnConfig(args.taskType);
+}
+if (response.length == 0 && args.workflowType != null) {
+	response = getColumnConfig(args.workflowType);
+}
 
 // Se non trova una configurazione mette quella di default...
 if (response==null || response.length == 0) {

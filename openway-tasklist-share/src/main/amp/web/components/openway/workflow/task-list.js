@@ -156,44 +156,8 @@ if (typeof Openway == "undefined" || !Openway) {
 		 *
 		 * @method onReady
 		 */
-		onReady: function DL_onReady()
-		{
-			var me = this;
-			if( Alfresco.constants.SITE === "" )
-			{
-				this.loadPreferences();
-			}
-			else
-			{
-				var webscript = Alfresco.constants.PROXY_URI + 
-						YAHOO.lang.substitute("api/iopenway/project/{projectId}/workflows?exclude={exclude}",
-				{
-					projectId: encodeURIComponent(Alfresco.constants.SITE),
-					exclude: this.options.hiddenWorkflowsNames.join(",")
-				});
-				Alfresco.util.Ajax.jsonRequest({
-					url: webscript,
-					method: Alfresco.util.Ajax.GET,
-					successCallback:
-					{
-						fn: function(resp)
-						{
-							me.options.projectWorkflows = resp.json.data;
-							me.loadPreferences();
-						},
-						scope:this
-					},
-					failureCallback:
-					{
-						fn: function (resp)
-						{
-							if (resp.serverResponse.statusText)
-								Alfresco.util.PopupManager.displayMessage({ text: resp.serverResponse.statusText });
-						},
-						scope:this
-					}
-				});
-			}
+		onReady: function DL_onReady() {
+			this.loadPreferences();
 		},
 		
 		loadPreferences: function ()
@@ -342,9 +306,6 @@ if (typeof Openway == "undefined" || !Openway) {
 			var dataTable = this.widgets.pagingDataTable.getDataTable();
 			dataTable.taskList = me;
 			
-			var original_doBeforeLoadData = dataTable.doBeforeLoadData;
-			
-
 			var sort = this.options.order.sort.replace(":", "_");
 			sort = dataTable.getColumn(sort);
 			if (sort) {
@@ -406,32 +367,6 @@ if (typeof Openway == "undefined" || !Openway) {
 			            return;
 			        }
 			    }
-			};
-			
-			
-			dataTable.doBeforeLoadData = function(sRequest, oResponse, oPayload)
-			{				
-				if(Alfresco.constants.SITE !== "")
-				{
-					var resp = [];
-					for(var i = 0; i < oResponse.results.length; i++)
-					{
-						var our = false;
-						for(var j = 0; j < me.options.projectWorkflows.length; j++)
-						{
-							if( oResponse.results[i].workflowInstance.id 
-									=== me.options.projectWorkflows[j].workflow.id )
-							{
-								our = true
-							}
-						}
-						if(our)
-							resp.push(oResponse.results[i]);
-					}
-					oResponse.results = resp;
-				}
-				
-				return original_doBeforeLoadData.apply(this, arguments);
 			};
 
 	        // File checked handler
@@ -759,9 +694,14 @@ if (typeof Openway == "undefined" || !Openway) {
 			var filterMgr = this.id.replace("_list_", "_filter-mgr_");
 			filterMgr = Alfresco.util.ComponentManager.get(filterMgr);
 			
+			var workflowType = null;
 			var taskType = null;
 			for (var i = 0; i < filterMgr.options.currentFilter.length; i++) {
 				var filter = filterMgr.options.currentFilter[i];
+
+				if(filter.indexOf("workflow-type|")==0) {
+					workflowType = filter.replace("workflow-type|", "");
+				}
 				if(filter.indexOf("task-type|")==0) {
 					taskType = filter.replace("task-type|", "");
 				}
@@ -771,7 +711,7 @@ if (typeof Openway == "undefined" || !Openway) {
 			// Recupera le colonne..
 			Alfresco.util.Ajax.jsonGet({
 				url : Alfresco.constants.URL_SERVICECONTEXT
-					+ "components/iopenway/workflow/task-columns?taskType=" + taskType,
+					+ "components/iopenway/workflow/task-columns?workflowType=" + workflowType + "&taskType=" + taskType,
 				successCallback : {
 					fn : function(response) {
 						if (response.json !== undefined) {
