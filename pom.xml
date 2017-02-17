@@ -164,7 +164,7 @@
 					<version>${release-plugin.version}</version>
 					<configuration>
 						<tagBase>${scm-project-tag.url}</tagBase>
-						<arguments>-Dobfuscate=true</arguments>
+						<arguments>-Dobfuscate=false</arguments>
 					</configuration>
 				</plugin>
 				<plugin>
