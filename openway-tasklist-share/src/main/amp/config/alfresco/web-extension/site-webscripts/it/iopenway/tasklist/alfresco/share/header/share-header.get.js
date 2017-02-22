@@ -1,3 +1,4 @@
+<import resource="classpath:/alfresco/site-webscripts/org/alfresco/share/imports/share-header.lib.js">
 /*-
  * ==============================LICENSE=============================
  * Intesys Openway Tasklist - Share
@@ -19,7 +20,6 @@
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
  * ============================LICENSE-END===========================
  */
-<import resource="classpath:/alfresco/site-webscripts/org/alfresco/share/imports/share-header.lib.js">
 
 //var appMenu = widgetUtils.findObject(model.jsonModel, "id", "HEADER_APP_MENU_BAR");
 //

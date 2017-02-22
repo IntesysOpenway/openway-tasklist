@@ -1,3 +1,4 @@
+<import resource="classpath:alfresco/site-webscripts/org/alfresco/components/workflow/workflow.lib.js">
 /*-
  * ==============================LICENSE=============================
  * Intesys Openway Tasklist - Share
@@ -19,7 +20,6 @@
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
  * ============================LICENSE-END===========================
  */
-<import resource="classpath:alfresco/site-webscripts/org/alfresco/components/workflow/workflow.lib.js">
 var workflowDefinitions = getWorkflowDefinitions(),
    filters = [];
 filters.push(
