@@ -15,7 +15,7 @@
 
 	<name>Intesys Openway Tasklist</name>
 	<description>Intesys Openway Tasklist</description>
-	
+
 	<organization>
 		<name>Intesys Openway Srl</name>
 		<url>http://www.iopenway.it/</url>
@@ -164,7 +164,9 @@
 					<version>${release-plugin.version}</version>
 					<configuration>
 						<tagBase>${scm-project-tag.url}</tagBase>
-						<arguments>-Dobfuscate=false</arguments>
+						<!-- Per disattivare l'offuscamento devo sovrascrivere il tag arguments di questo plugin. Non posso mettere la variabile a false perche' l'attivazione del 
+							profilo privo di offuscamento prevede che la proprieta' "obfuscate" non sia definita; non posso quindi metterla a false. -->
+						<arguments>-DobfuscateDISABLED=false</arguments>
 					</configuration>
 				</plugin>
 				<plugin>
