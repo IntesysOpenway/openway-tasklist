@@ -10,7 +10,7 @@
 
 	<groupId>it.iopenway</groupId>
 	<artifactId>openway-tasklist</artifactId>
-	<version>4.2.4.1.4</version>
+	<version>4.2.4.1.5-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Intesys Openway Tasklist</name>
@@ -47,7 +47,7 @@
 	<scm>
 		<!-- URL to GIT folder that contains this pom -->
 		<developerConnection>scm:git:git@github.com:IntesysOpenway/openway-tasklist.git</developerConnection>
-		<tag>openway-tasklist-4.2.4.1.4</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<distributionManagement>
