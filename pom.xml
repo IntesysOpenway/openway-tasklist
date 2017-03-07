@@ -44,6 +44,9 @@
 				<configuration combine.children="append">
 					<!-- Per questo progetto usiamo la licenza LGPLv3 -->
 					<licenseName>lgpl_v3</licenseName>
+					<excludes>
+						<exclude>**/*.config.xml</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 		</plugins>
