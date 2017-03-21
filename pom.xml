@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>it.iopenway</groupId>
 		<artifactId>openway-alfresco-sdk-parent</artifactId>
-		<version>5.1.6.2</version>
+		<version>5.1.6.4-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>openway-tasklist</artifactId>
@@ -44,9 +44,6 @@
 				<configuration combine.children="append">
 					<!-- Per questo progetto usiamo la licenza LGPLv3 -->
 					<licenseName>lgpl_v3</licenseName>
-					<excludes>
-						<exclude>**/*.config.xml</exclude>
-					</excludes>
 				</configuration>
 			</plugin>
 		</plugins>
