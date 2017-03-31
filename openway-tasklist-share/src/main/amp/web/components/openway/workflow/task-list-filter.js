@@ -117,7 +117,7 @@ if (typeof Openway == "undefined" || !Openway) {
 						},
 						scope : this
 					},
-					failureMessage : "Errore in fase di inizializzazione della form",
+					failureMessage : this.msg("error.forminitialize"),
 					scope : this
 				});
 				

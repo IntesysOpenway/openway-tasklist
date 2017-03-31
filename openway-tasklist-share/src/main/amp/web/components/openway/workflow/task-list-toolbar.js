@@ -201,7 +201,7 @@ if (typeof Openway == "undefined" || !Openway) {
 						},
 						scope : this
 					},
-					failureMessage : "Errore in fase di inizializzazione della form",
+					failureMessage : this.msg("error.forminitialize"),
 					scope : this
 				});
 				
@@ -244,7 +244,7 @@ if (typeof Openway == "undefined" || !Openway) {
 				 */
 				function _printReport (report) {
 	               Alfresco.util.PopupManager.displayPrompt({
-                      title: "Esito chiusura tasks",
+                      title: this.msg("label.taskclosingresult"),
                       text: report
                    });
 	               me.widgets.taskList.widgets.pagingDataTable.reloadDataTable();
@@ -268,7 +268,7 @@ if (typeof Openway == "undefined" || !Openway) {
 					},
 					failureCallback : {
 						fn : function(response) {
-							_printReport("Errore non gestito in fase di chiusura dei task.\nRicaricare la pagina.");
+							_printReport(this.msg("error.taskclosingerror"));
 						},
 						scope : this
 					},
