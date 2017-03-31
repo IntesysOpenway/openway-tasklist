@@ -185,7 +185,7 @@ if (typeof Openway == "undefined" || !Openway) {
 								var container = Dom.get(this.id + "-transitions-buttons");
 								for (var i = 0; i < response.json.transitions.length; i++) {
 									var value = response.json.transitions[i].value;
-									var label = response.json.transitions[i].label;
+									var label = Alfresco.util.message(response.json.transitions[i].label);
 									
 									var button = new YAHOO.widget.Button( {
 												type : 'button',

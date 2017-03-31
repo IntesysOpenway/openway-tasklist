@@ -48,7 +48,7 @@
 				<#-- TASK SELECT -->
 				<@markup id="taskSelect">
 					<div class="task-select hidden">
-						<button id="${el}-taskSelect-button" name="taskSelect-button">${msg("menu.select")}</button>
+						<button id="${el}-taskSelect-button" name="taskSelect-button">${msg("menu.select")} &#9662;</button>
 						<div id="${el}-taskSelect-menu" class="yuimenu">
 							<div class="bd">
 								<ul>
