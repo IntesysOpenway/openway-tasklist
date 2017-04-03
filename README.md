@@ -13,6 +13,8 @@ Features:
 *  opportunity to configure custom columns for every workflow or task type
 *  opportunity to select and complete multiple tasks of the same type
 
+The Addon is developed for Alfresco Community Edition 4.2.e or more, Alfresco Community Edition 5.1.g.
+
 Installing
 -----------
 

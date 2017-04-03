@@ -201,7 +201,7 @@ if (typeof Openway == "undefined" || !Openway) {
 						},
 						scope : this
 					},
-					failureMessage : this.msg("error.forminitialize"),
+					failureMessage : Alfresco.util.message("error.forminitialize"),
 					scope : this
 				});
 				
@@ -244,7 +244,7 @@ if (typeof Openway == "undefined" || !Openway) {
 				 */
 				function _printReport (report) {
 	               Alfresco.util.PopupManager.displayPrompt({
-                      title: this.msg("label.taskclosingresult"),
+                      title: Alfresco.util.message("label.taskclosingresult"),
                       text: report
                    });
 	               me.widgets.taskList.widgets.pagingDataTable.reloadDataTable();
@@ -268,7 +268,7 @@ if (typeof Openway == "undefined" || !Openway) {
 					},
 					failureCallback : {
 						fn : function(response) {
-							_printReport(this.msg("error.taskclosingerror"));
+							_printReport(Alfresco.util.message("error.taskclosingerror"));
 						},
 						scope : this
 					},
