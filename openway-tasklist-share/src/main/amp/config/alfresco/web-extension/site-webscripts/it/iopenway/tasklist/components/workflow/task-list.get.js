@@ -3,10 +3,10 @@
 
 function main()
 {
-	model.hiddenTaskTypes = getHiddenTaskTypes();
-	model.hiddenWorkflowsNames = getHiddenWorkflowNames();
-	model.filterParameters = getFilterParameters();
-	model.maxItems = getMaxItems();
+	var hiddenTaskTypes = getHiddenTaskTypes();
+	var hiddenWorkflowsNames = getHiddenWorkflowNames();
+	var filterParameters = getFilterParameters();
+	var maxItems = getMaxItems();
 	
 	var myConfig = new XML(config.script),
 		sorters = [];
@@ -22,7 +22,6 @@ function main()
 	      sortField: xmlSorter.@parameters.toString()
 	   });
 	}
-	model.sorters = sorters;
 	
 //	// Aggiunta dei filtri da config
 //	var filters = config.scoped["taskList"]["filters-parameters"].getChildren("filter");
@@ -31,29 +30,40 @@ function main()
 	
 	// Aggiunta colonne
 	var properties = [];
-	for each(var xmlProp in myConfig..property)
-	{
-//		logger.log("Colonna");
-//		logger.log(typeof xmlProp);
-//		logger.log(xmlProp);
-		
-		properties.push(
-	   {
-	      name: xmlProp.@name.toString(),
-	      width: xmlProp.@width.toString(),
-	      formatter: xmlProp.@formatter.toString(),
-	   });
+	for each(var xmlProp in myConfig..property) {
+		properties.push({
+			name: xmlProp.@name.toString(),
+			width: xmlProp.@width.toString(),
+			formatter: xmlProp.@formatter.toString(),
+		});
 	}
-	model.properties = properties;
 	
+	var sort, dir;
 	if (myConfig..order) {
-		model.sort= myConfig..order[0].@sort.toString();
-		model.dir = myConfig..order[0].@dir.toString();
+		sort= myConfig..order[0].@sort.toString();
+		dir = myConfig..order[0].@dir.toString();
 	} else {
-		model.sort= "bpmn_dueDate";
-		model.dir = "asc";
+		sort= "bpmn_dueDate";
+		dir = "asc";
 	}
 	
+	model.widgets = [{
+		id : "TaskList",
+		name : "Openway.component.TaskList",
+		options : {
+			filterParameters: filterParameters,
+			hiddenTaskTypes: hiddenTaskTypes,
+			hiddenWorkflowsNames: hiddenWorkflowsNames,
+			maxItems: (maxItems ? maxItems : 50),
+			order: {
+				sort: sort,
+				dir: dir
+			},
+			sorters: sorters,
+			taskProps: properties
+   		}
+	}];
+
 }
 
 main();

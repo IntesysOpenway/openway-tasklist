@@ -93,8 +93,6 @@ if (typeof Openway == "undefined" || !Openway) {
 		 * Decoupled event listeners
 		 */
 		YAHOO.Bubbling.on("filterChanged", this.onFilterChanged, this);
-		YAHOO.Bubbling.on("taskListTableReload", this.onTableReload, this);
-
 		YAHOO.Bubbling.on("filterTasksChanged", this.onFilterTasksChanged, this);
 
 		return this;
@@ -394,24 +392,19 @@ if (typeof Openway == "undefined" || !Openway) {
 			};
 			
 			
-			dataTable.doBeforeLoadData = function(sRequest, oResponse, oPayload)
-			{				
-				if(Alfresco.constants.SITE !== "")
-				{
+			dataTable.doBeforeLoadData = function(sRequest, oResponse, oPayload) {				
+				if(me.options.projectWorkflows.length > 0) {
 					var resp = [];
-					for(var i = 0; i < oResponse.results.length; i++)
-					{
+					for(var i = 0; i < oResponse.results.length; i++) {
 						var our = false;
-						for(var j = 0; j < me.options.projectWorkflows.length; j++)
-						{
-							if( oResponse.results[i].workflowInstance.id 
-									=== me.options.projectWorkflows[j].workflow.id )
-							{
+						for(var j = 0; j < me.options.projectWorkflows.length; j++) {
+							if( oResponse.results[i].workflowInstance.id == me.options.projectWorkflows[j].id ) {
 								our = true
 							}
 						}
-						if(our)
-							resp.push(oResponse.results[i]);
+						if(our) {
+							resp.push(oResponse.results[i]);	
+						}
 					}
 					oResponse.results = resp;
 				}
@@ -625,39 +618,6 @@ if (typeof Openway == "undefined" || !Openway) {
 					dir: this.options.order.dir
 				});
 			return Alfresco.constants.PROXY_URI + webscript; // + '&' + this.getReqParameters();
-		},
-		
-		onTableReload: function()
-		{
-			var me = this;
-			var webscript = Alfresco.constants.PROXY_URI + 
-						YAHOO.lang.substitute("api/iopenway/project/{projectId}/workflows?exclude={exclude}",
-			{
-				projectId: encodeURIComponent(Alfresco.constants.SITE),
-				exclude: this.options.hiddenWorkflowsNames.join(",")
-			});
-			Alfresco.util.Ajax.jsonRequest({
-				url: webscript,
-				method: Alfresco.util.Ajax.GET,
-				successCallback:
-				{
-					fn: function(resp)
-					{
-						me.options.projectWorkflows = resp.json.data;
-						this.widgets.pagingDataTable.loadDataTable(/*this.getReqParameters()*/);
-					},
-					scope:this
-				},
-				failureCallback:
-				{
-					fn: function (resp)
-					{
-						if (resp.serverResponse.statusText)
-							Alfresco.util.PopupManager.displayMessage({ text: resp.serverResponse.statusText });
-					},
-					scope:this
-				}
-			});
 		},
 		
 		onDetachWorkflow: function(obj)

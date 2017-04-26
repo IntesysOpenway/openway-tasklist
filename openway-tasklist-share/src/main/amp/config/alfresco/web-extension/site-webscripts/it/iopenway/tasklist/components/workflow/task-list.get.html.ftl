@@ -22,12 +22,16 @@
 <#include "/org/alfresco/components/component.head.inc">
 
 <@markup id="css" >
-	<@link href="${url.context}/res/components/openway/workflow/task-list.css" />
+	<@link href="${url.context}/res/components/openway/workflow/task-list.css" group="workflow" />
 </@>
 
 <@markup id="js">
-	<@script src="${url.context}/res/components/workflow/workflow-actions.js" />
-	<@script src="${url.context}/res/components/openway/workflow/task-list.js" />
+	<@script src="${url.context}/res/components/workflow/workflow-actions.js" group="workflow" />
+	<@script src="${url.context}/res/components/openway/workflow/task-list.js" group="workflow" />
+</@>
+
+<@markup id="widgets">
+   <@createWidgets group="workflow"/>
 </@>
 
 <@markup id="html">
@@ -46,35 +50,4 @@
 			<div id="${el}-paginatorBottom" class="paginator">&nbsp;</div>
 		</div>
 	</div>
-</@>
-
-<@inlineScript group="worklflow">
-	(function()
-	{
-	   new Openway.component.TaskList("${el}").setOptions(
-	   {
-	      filterParameters: <@filter.jsonParameterFilter filterParameters />,
-	      hiddenTaskTypes: <@workflow.jsonHiddenTaskTypes hiddenTaskTypes/>,
-	      hiddenWorkflowsNames: [<#list hiddenWorkflowsNames as workflow>"${workflow}"<#if workflow_has_next>, </#if></#list>],
-	      maxItems: ${maxItems!"50"},
-	      order: {
-	      	sort: "${sort?js_string}",
-	      	dir: "${dir?js_string}",
-	      },
-	      sorters:
-	      {<#list sorters as sorter>
-	         "${sorter.type?js_string}": "${sorter.sortField?js_string}"<#if sorter_has_next>,</#if>
-	      </#list>}
-	      <#if properties??>
-	      , taskProps: [
-				<#list properties as prop>
-					{ prop: "${prop.name?js_string}", width: ${prop.width?js_string}, formatter: "${prop.formatter?js_string}" }
-					<#if prop_has_next>,</#if>
-				</#list>
-			]
-	      </#if>
-	   }).setMessages(
-	      ${messages}
-	   );
-	})();
 </@>
