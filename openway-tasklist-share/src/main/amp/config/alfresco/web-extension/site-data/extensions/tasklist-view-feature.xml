@@ -38,6 +38,11 @@
 					<targetPackageRoot>org.alfresco.components.dashlets</targetPackageRoot>
 					<sourcePackageRoot>it.iopenway.tasklist.alfresco.components.dashlets</sourcePackageRoot>
 				</customization>
+				<!-- Page Templates -->
+				<customization>
+					<targetPackageRoot>org.alfresco</targetPackageRoot>
+					<sourcePackageRoot>it.iopenway.alfresco</sourcePackageRoot>
+				</customization>
 			</customizations>
 		</module>
 
