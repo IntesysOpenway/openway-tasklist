@@ -290,7 +290,7 @@ if (typeof Openway == "undefined" || !Openway) {
 				},
 				dataSource:
 				{
-					url: this.getDataSourceURL(),
+					url: this.getDataSourceURL(true),
 //					defaultFilter:
 //					{
 //						filterId: "workflows.active"
@@ -602,7 +602,7 @@ if (typeof Openway == "undefined" || !Openway) {
 			}
 		},
 		
-		getDataSourceURL: function()
+		getDataSourceURL: function(onInit)
 		{
 			var props = [];
 			for( var p in this.options.taskProps )
@@ -614,8 +614,10 @@ if (typeof Openway == "undefined" || !Openway) {
 					authority: encodeURIComponent(Alfresco.constants.USERNAME),
 					prop: props.join(","),
 					exclude: this.options.hiddenTaskTypes.join(","),
-					sort: this.options.order.sort,
-					dir: this.options.order.dir
+					// 8/3/18) Impostato l'ordinamento delle task in apertura della tasklist come nella tasklist di default(per data di inizio decrescente)
+					// ignorando le preferences dell'utente
+					sort: onInit === true ? "bpm_startDate" : this.options.order.sort,
+					dir: onInit === true ? "desc" : this.options.order.dir
 				});
 			return Alfresco.constants.PROXY_URI + webscript; // + '&' + this.getReqParameters();
 		},
