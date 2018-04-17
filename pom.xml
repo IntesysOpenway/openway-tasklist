@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>openway-tasklist</artifactId>
-	<version>5.2.7.1.10-SNAPSHOT</version>
+	<version>5.2.6.1.10-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Intesys Openway Tasklist</name>
