@@ -38,8 +38,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.web.scripts.workflow.AbstractWorkflowWebscript;
 import org.alfresco.repo.web.scripts.workflow.WorkflowModelBuilder;
@@ -52,6 +50,7 @@ import org.alfresco.service.cmr.workflow.WorkflowTaskQuery.OrderBy;
 import org.alfresco.service.cmr.workflow.WorkflowTaskState;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ModelUtil;
+import org.apache.http.HttpStatus;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
@@ -303,7 +302,7 @@ public class TaskInstancesGet extends AbstractWorkflowWebscript {
             }
             catch (IllegalArgumentException e) {
                 String msg = "Unrecognised State parameter: " + stateName;
-                throw new WebScriptException(HttpServletResponse.SC_BAD_REQUEST, msg);
+                throw new WebScriptException(HttpStatus.SC_BAD_REQUEST, msg);
             }
         }
 
