@@ -1,233 +1,276 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>it.iopenway</groupId>
 		<artifactId>openway-tasklist</artifactId>
-		<version>5.2.6.1.11-SNAPSHOT</version>
+		<version>6.2.0.1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>openway-tasklist-alfresco</artifactId>
-	<packaging>amp</packaging>
+	<packaging>jar</packaging>
 
 	<name>Intesys Openway Tasklist - Alfresco</name>
 	<description>Intesys Openway Tasklist - Alfresco</description>
 
 	<properties>
+		<!-- Environment configuration properties -->
+		<acs.debug.port>8888</acs.debug.port>
+		<!-- This parameter is only required for those cases in which ACS is not exposed in http://localhost:8080/alfresco (i.e. Windows Docker) -->
+		<test.acs.endpoint.path></test.acs.endpoint.path>
 
-		<!-- Alfresco SDK Properties -->
-		<app.testing.jvm.args>-Xms256m -Xmx2048m -XX:MaxPermSize=512m
-			-Duser.language=it</app.testing.jvm.args>
-
-		<alfresco.db.name>openway-tasklist-alfresco-eclipse</alfresco.db.name>
-		<alfresco.db.username>openway-tasklist-alfresco</alfresco.db.username>
-		<alfresco.db.password>openway-tasklist-alfresco</alfresco.db.password>
-		<alfresco.db.url>jdbc:postgresql://localhost:5432/${alfresco.db.name}</alfresco.db.url>
-		<alfresco.db.datasource.class>org.postgresql.Driver</alfresco.db.datasource.class>
-
-		<!-- Defines the target WAR artifactId to run this amp, only used with the -Pamp-to-war switch . | Allowed values: alfresco | share. Defaults to a repository AMP, 
-			but could point to your foundation WAR -->
-		<alfresco.client.war>alfresco</alfresco.client.war>
-
-		<!-- Defines the target WAR groupId to run this amp, only used with the -Pamp-to-war switch . | Could be org.alfresco | org.alfresco.enterprise or your corporate 
-			groupId -->
-		<alfresco.client.war.groupId>org.alfresco</alfresco.client.war.groupId>
-
-		<!-- Defines the target WAR version to run this amp, only used with the -Pamp-to-war switch -->
-		<alfresco.client.war.version>5.2.g</alfresco.client.war.version>
-
-		<!-- Tomcat properties -->
-		<maven.tomcat.port>9080</maven.tomcat.port>
 	</properties>
 
-	<build>
-		<!-- Overrinding Resources of parent pom -->
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>${app.filtering.enabled}</filtering>
-			</resource>
-			<resource>
-				<directory>${app.amp.folder}</directory>
-				<targetPath>${app.amp.output.folder}</targetPath>
-				<filtering>${app.filtering.enabled}</filtering>
-				<excludes>
-					<!-- Esclusione file autogenerati da Eclipse -->
-					<exclude>**/*.jsfdia</exclude>
-					<!-- Esclusione file che utilizzano marcatori simili a quelli usati da maven -->
-					<exclude>**/*.ftl</exclude>
-					<exclude>**/*.jasper</exclude>
-					<exclude>**/*.ks</exclude>
-					<exclude>**/*.ttf</exclude>
-				</excludes>
-			</resource>
-			<resource>
-				<!-- Inclusione delle risorse che utilizzano marcatori simili a quelli usati da maven mettendo il filtering a false, cosi' i tag non vengono rimpiazzati -->
-				<directory>${app.amp.folder}</directory>
-				<targetPath>${app.amp.output.folder}</targetPath>
-				<filtering>false</filtering>
-				<includes>
-					<include>**/*.ftl</include>
-					<include>**/*.jasper</include>
-					<include>**/*.ks</include>
-					<include>**/*.ttf</include>
-				</includes>
-			</resource>
-		</resources>
-	</build>
-
-	<profiles>
-		<!-- Profilo attivato ogni volta che la property obfuscate non è dichiarata. Non offusca i sorgenti. -->
-		<profile>
-			<id>iopenway-no-obfuscate-profile</id>
-			<activation>
-				<property>
-					<name>!obfuscate</name>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<!-- Creazione del file jar del progetto in modo che oltre all'amp ci sia anche una dipendenza da usare in altri progetti. Il file generato ha classifier jar -->
-					<plugin>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>openway-build-jar.jar-not-obfuscated</id>
-								<phase>package</phase>
-								<goals>
-									<goal>single</goal>
-								</goals>
-								<configuration>
-									<descriptors>
-										<descriptor>assembly-jar-descriptor.xml</descriptor>
-									</descriptors>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<!-- Profilo attivato ogni volta che la property obfuscate=true. I sorgenti vengono offuscati con proguard. -->
-		<profile>
-			<id>iopenway-obfuscate-profile</id>
-			<activation>
-				<property>
-					<name>obfuscate</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<pluginManagement>
-					<plugins>
-						<!-- In caso di offuscamento faccio pescare le classi compilate nella cartella dove sono gia' state offuscate. -->
-						<plugin>
-							<groupId>org.alfresco.maven.plugin</groupId>
-							<artifactId>alfresco-maven-plugin</artifactId>
-							<extensions>true</extensions>
-							<configuration combine.children="append">
-								<classesDirectory>${project.build.directory}/classes-ob</classesDirectory>
-							</configuration>
-						</plugin>
-					</plugins>
-				</pluginManagement>
-				<plugins>
-					<plugin>
-						<groupId>com.github.wvengen</groupId>
-						<artifactId>proguard-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>compile</phase>
-								<goals>
-									<goal>proguard</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<options combine.children="append">
-								<option>-injar ${project.build.directory}/classes/</option>
-								<option>-outjar ${project.build.directory}/classes-ob/</option>
-								<option>-renamesourcefileattribute SourceFile</option>
-								<option>-keepparameternames</option>
-								<option>-keepattributes
-									Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,
-									*Annotation*,EnclosingMethod,!LocalVariableTable,!LocalVariableTypeTable</option>
-								<option>-keep public class * { public protected *;}</option>
-								<!-- Preserve all getter and setter -->
-								<option>-keep class * {
-									void set*(***);
-									void set*(int, ***);
-									boolean is*();
-									boolean is*(int);
-									*** get*();
-									*** get*(int);
-									}</option>
-								<!-- <option><![CDATA[-keep public class * { public protected *;}]]></option> -->
-								<!-- Utile per javaDoc -->
-								<option>-keepclassmembernames
-									class * {
-									java.lang.Class
-									class$(java.lang.String);
-									java.lang.Class
-									class$(java.lang.String, boolean);}</option>
-								<!-- Enumerazioni -->
-								<option>-keepclassmembers
-									enum * {
-									public static **[] values();
-									public static **
-									valueOf(java.lang.String);}</option>
-								<!-- Serializzazioni -->
-								<option>-keepclassmembers
-									class * implements java.io.Serializable
-									{
-									static final long serialVersionUID;
-									private static final
-									java.io.ObjectStreamField[]
-									serialPersistentFields;
-									private void
-									writeObject(java.io.ObjectOutputStream);
-									private void
-									readObject(java.io.ObjectInputStream);
-									java.lang.Object
-									writeReplace();
-									java.lang.Object readResolve();}</option>
-							</options>
-						</configuration>
-					</plugin>
-
-					<!-- Creazione del file jar del progetto in modo che oltre all'amp ci sia anche una dipendenza da usare in altri progetti. Il file generato ha classifier jar -->
-					<plugin>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>openway-build-jar.jar-obfuscated</id>
-								<phase>package</phase>
-								<goals>
-									<goal>single</goal>
-								</goals>
-								<configuration>
-									<descriptors>
-										<descriptor>assembly-jar-descriptor-obfuscated.xml</descriptor>
-									</descriptors>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-
+	<!-- Libs used in Unit and Integration tests -->
+	<!-- IMPORTANT - Test dependencies need to be here in the top parent POM as the Alfresco Maven IT Mojo runs as part of the parent project ... -->
 	<dependencies>
 		<dependency>
-			<groupId>${alfresco.groupId}</groupId>
-			<artifactId>alfresco-repository</artifactId>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.alfresco</groupId>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- The main Alfresco Repo dependency for compiling Java code in src/main/java -->
+		<dependency>
+			<groupId>${alfresco.groupId}</groupId>
 			<artifactId>alfresco-remote-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Bring in Alfresco RAD so we get access to AlfrescoTestRunner classes -->
+		<dependency>
+			<groupId>org.alfresco.maven</groupId>
+			<artifactId>alfresco-rad</artifactId>
+			<version>${alfresco.sdk.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
+	<dependencyManagement>
+		<dependencies>
+			<!-- This will import the dependencyManagement for all artifacts in the selected Alfresco platform. NOTE: You still need to define dependencies in your POM, but 
+				you can omit version as it's enforced by this dependencyManagement. NOTE: It defaults to the latest version this SDK pom has been tested with, but alfresco version 
+				can/should be overridden in your project's pom -->
+			<dependency>
+				<groupId>${alfresco.groupId}</groupId>
+				<artifactId>${alfresco.bomDependencyArtifactId}</artifactId>
+				<version>${alfresco.platform.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<plugins>
+			<!-- Build an AMP if 3rd party libs are needed by the extensions JARs are the default artifact produced in your modules, if you want to build an amp for each 
+				module you have to enable this plugin and inspect the src/main/assembly.xml file if you want to customize the layout of your AMP. The end result is that Maven will 
+				produce both a JAR file and an AMP with your module. -->
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-assembly-plugin</artifactId> <version>2.6</version> <executions> <execution> <id>build-amp-file</id> 
+				<phase>package</phase> <goals> <goal>single</goal> </goals> <configuration> <appendAssemblyId>false</appendAssemblyId> <descriptor>src/main/assembly/amp.xml</descriptor> 
+				</configuration> </execution> </executions> <dependencies> <dependency> <groupId>org.alfresco.maven.plugin</groupId> <artifactId>alfresco-maven-plugin</artifactId> 
+				<version>${alfresco.sdk.version}</version> </dependency> </dependencies> </plugin> -->
+
+			<!-- Filter the test resource files in the AIO parent project, and do property substitutions. We need this config so this is done before the Alfresco Maven Plugin 
+				'run' is executed. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-and-filter-docker-compose-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}/docker</outputDirectory>
+							<resources>
+								<resource>
+									<directory>docker</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-and-filter-docker-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/docker</directory>
+									<filtering>true</filtering>
+									<excludes>
+										<exclude>**/*.jar</exclude>
+										<exclude>**/*.so</exclude>
+										<exclude>**/*.gz</exclude>
+									</excludes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-and-filter-docker-resources-non-filtered</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/docker</directory>
+									<filtering>false</filtering>
+									<includes>
+										<include>**/*.jar</include>
+										<include>**/*.so</include>
+										<include>**/*.gz</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-repository-extension</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/extensions</outputDirectory>
+							<resources>
+								<resource>
+									<directory>target</directory>
+									<includes>
+										<include>${project.build.finalName}.jar</include>
+									</includes>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-repository-tests</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/extensions</outputDirectory>
+							<resources>
+								<resource>
+									<directory>target</directory>
+									<includes>
+										<include>${project.build.finalName}-tests.jar</include>
+									</includes>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.1.1</version>
+				<executions>
+					<!-- Copy the dependencies required for execute integration tests -->
+					<execution>
+						<id>collect-test-artifacts</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/extensions</outputDirectory>
+							<excludeScope>compile</excludeScope>
+						</configuration>
+					</execution>
+					<!-- Collect extensions (JARs or AMPs) declared in this module to be deployed to docker -->
+					<execution>
+						<id>collect-extensions</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/extensions</outputDirectory>
+							<includeScope>runtime</includeScope>
+							<!-- IMPORTANT: if using amp dependencies only, add <includeTypes>amp</includeTypes> -->
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Make sure we attach the tests so we can include them when running -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Runs the integration tests, any class that follows naming convention "**/IT*.java", "**/*IT.java", and "**/*ITCase.java" will be considered an integration 
+				test -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>3.0.0-M1</version>
+				<configuration>
+					<systemPropertyVariables>
+						<acs.endpoint.path>${test.acs.endpoint.path}</acs.endpoint.path>
+					</systemPropertyVariables>
+				</configuration>
+				<executions>
+					<execution>
+						<id>integration-test</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>verify-test</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-junit47</artifactId>
+						<version>3.0.0-M1</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
 </project>

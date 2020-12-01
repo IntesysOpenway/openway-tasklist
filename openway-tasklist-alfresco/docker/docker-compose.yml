@@ -1,0 +1,55 @@
+version: '3.4'
+services:
+#  Optional
+#  openway-tasklist-share:
+#    image: ${docker.share.image}:${alfresco.share.version}
+#    environment:
+#      REPO_HOST: openway-tasklist-acs
+#      REPO_PORT: 8080
+#    ports:
+#      - "${share.port}:8080"
+  openway-tasklist-acs:
+    image: docker.iopenway.it/openway-tasklist/acs:${project.version}
+    build:
+      dockerfile: ./Dockerfile
+      context: ../../../target
+    environment:
+      CATALINA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888"
+    ports:
+      - "${acs.port}:8080"
+      - "${acs.debug.port}:8888"
+    volumes:
+      - openway-tasklist-acs-volume:/usr/local/tomcat/alf_data
+    depends_on:
+      - openway-tasklist-postgres
+  openway-tasklist-postgres:
+    image: postgres:9.6
+    environment:
+      POSTGRES_DB: alfresco
+      POSTGRES_USER: alfresco
+      POSTGRES_PASSWORD: alfresco
+    command: postgres -c max_connections=300 -c log_min_messages=LOG
+    ports:
+      - "${postgres.port}:5432"
+    volumes:
+      - openway-tasklist-db-volume:/var/lib/postgresql/data
+  openway-tasklist-ass:
+    image: alfresco/alfresco-search-services:1.2.0
+    environment:
+      SOLR_ALFRESCO_HOST: openway-tasklist-acs
+      SOLR_ALFRESCO_PORT: 8080
+      SOLR_SOLR_HOST: openway-tasklist-ass
+      SOLR_SOLR_PORT: 8983
+      SOLR_CREATE_ALFRESCO_DEFAULTS: alfresco,archive
+    ports:
+      - "8983:8983"
+    volumes:
+      - openway-tasklist-ass-volume:/opt/alfresco-search-services/contentstore
+      - openway-tasklist-ass-volume:/opt/alfresco-search-services/data
+volumes:
+  openway-tasklist-acs-volume:
+    external: true
+  openway-tasklist-db-volume:
+    external: true
+  openway-tasklist-ass-volume:
+    external: true

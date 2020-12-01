@@ -13,7 +13,7 @@ Features:
 *  opportunity to configure custom columns for every workflow or task type
 *  opportunity to select and complete multiple tasks of the same type
 
-The Addon is developed for Alfresco Community Edition 4.2.e or more, Alfresco Community Edition 5.1.g.
+The Addon is developed for Alfresco Community Edition 4.2.e or more, Alfresco Community Edition 5.1.g, Alfresco Community Edition 6.2.0ga.
 
 Installing
 -----------
@@ -27,7 +27,7 @@ Installing
 Build from source
 -----------
 
-1.	Clone the repository and checkout specific release tag (4.2.4.x.x for Alfresco 4.2.e , 5.1.6.x.x for Alfresco 5.1.g)
+1.	Clone the repository and checkout specific release tag (4.2.4.x.x for Alfresco 4.2.e , 5.1.6.x.x for Alfresco 5.1.g, 6.2.0.x.x for Alfresco 6.2.0ga)
 2.	Run `mvn clean install` to build amps, jars and install them to local repository
 
 Include openway-tasklist as dependency of your Alfresco Maven SDK project via maven configuration

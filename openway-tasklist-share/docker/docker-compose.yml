@@ -1,0 +1,71 @@
+version: '3.4'
+services:
+  openway-tasklist-share:
+    image: docker.iopenway.it/openway-tasklist/share:${project.version}
+    build:
+      dockerfile: ./Dockerfile
+      context: ../../../target
+    environment:
+      CATALINA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888"
+      REPO_HOST: ${acs.host}
+      REPO_PORT: ${acs.port}
+    ports:
+      - "${share.port}:8080"
+      - "${share.debug.port}:8888"
+# Optional
+#  openway-tasklist-acs:
+#    image: ${docker.acs.image}:${alfresco.platform.version}
+#    environment:
+#      JAVA_OPTS: "
+#                -Ddb.driver=org.postgresql.Driver
+#                -Ddb.username=alfresco
+#                -Ddb.password=alfresco
+#                -Ddb.url=jdbc:postgresql://openway-tasklist-postgres:5432/alfresco
+#                -Dsolr.host=openway-tasklist-search
+#                -Dsolr.port=8983
+#                -Dsolr.secureComms=none
+#                -Dsolr.base.url=/solr
+#                -Dindex.subsystem.name=solr6
+#                -Dcsrf.filter.enabled=false
+#                -Dmessaging.broker.url=\"vm://localhost?broker.persistent=false\"
+#                -Dtransform.service.enabled=false
+#                -Dlocal.transform.service.enabled=false
+#                -Dlegacy.transform.service.enabled=false
+#                "
+#    ports:
+#      - "${acs.port}:8080"
+#    volumes:
+#      - openway-tasklist-acs-volume:/usr/local/tomcat/alf_data
+#    depends_on:
+#      - openway-tasklist-postgres
+#  openway-tasklist-postgres:
+#    image: postgres:9.6
+#    environment:
+#      POSTGRES_DB: alfresco
+#      POSTGRES_USER: alfresco
+#      POSTGRES_PASSWORD: alfresco
+#    command: postgres -c max_connections=300 -c log_min_messages=LOG
+#    ports:
+#      - "${postgres.port}:5432"
+#    volumes:
+#      - openway-tasklist-db-volume:/var/lib/postgresql/data
+#  openway-tasklist-search:
+#    image: alfresco/alfresco-search-services:1.2.0
+#    environment:
+#      SOLR_ALFRESCO_HOST: openway-tasklist-acs
+#      SOLR_ALFRESCO_PORT: 8080
+#      SOLR_SOLR_HOST: openway-tasklist-search
+#      SOLR_SOLR_PORT: 8983
+#      SOLR_CREATE_ALFRESCO_DEFAULTS: alfresco,archive
+#    ports:
+#      - "8983:8983"
+#    volumes:
+#      - openway-tasklist-search-volume:/opt/alfresco-search-services/contentstore
+#      - openway-tasklist-search-volume:/opt/alfresco-search-services/data
+#volumes:
+#  openway-tasklist-acs-volume:
+#    external: true
+#  openway-tasklist-db-volume:
+#    external: true
+#  openway-tasklist-search-volume:
+#    external: true

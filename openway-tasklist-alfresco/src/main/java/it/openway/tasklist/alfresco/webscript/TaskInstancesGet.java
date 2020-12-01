@@ -77,7 +77,7 @@ public class TaskInstancesGet extends AbstractWorkflowWebscript {
     protected Map<String, Object> buildModel(WorkflowModelBuilder modelBuilder, WebScriptRequest req, Status status, Cache cache) {
 
         Map<String, String> params = req.getServiceMatch().getTemplateVars();
-        Map<String, Object> filters = new HashMap<String, Object>(4);
+        Map<String, Object> filters = new HashMap<>(4);
 
         // authority is not included into filters list as it will be taken into
         // account before filtering
@@ -155,18 +155,18 @@ public class TaskInstancesGet extends AbstractWorkflowWebscript {
                 if (pooledTasksOnly != null) {
                     if (pooledTasksOnly.booleanValue()) {
                         // only return pooled tasks the user can claim
-                        allTasks = new ArrayList<WorkflowTask>(pooledTasks.size());
+                        allTasks = new ArrayList<>(pooledTasks.size());
                         allTasks.addAll(pooledTasks);
                     }
                     else {
                         // only return tasks assigned to the user
-                        allTasks = new ArrayList<WorkflowTask>(tasks.size());
+                        allTasks = new ArrayList<>(tasks.size());
                         allTasks.addAll(tasks);
                     }
                 }
                 else {
                     // include both assigned and unassigned tasks
-                    allTasks = new ArrayList<WorkflowTask>(tasks.size() + pooledTasks.size());
+                    allTasks = new ArrayList<>(tasks.size() + pooledTasks.size());
                     allTasks.addAll(tasks);
                     allTasks.addAll(pooledTasks);
                 }
@@ -219,7 +219,7 @@ public class TaskInstancesGet extends AbstractWorkflowWebscript {
         int maxItems = getIntParameter(req, PARAM_MAX_ITEMS, DEFAULT_MAX_ITEMS);
         int skipCount = getIntParameter(req, PARAM_SKIP_COUNT, DEFAULT_SKIP_COUNT);
         int totalCount = 0;
-        ArrayList<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
+        ArrayList<Map<String, Object>> results = new ArrayList<>();
 
         // Filter results
         WorkflowTask task = null;
@@ -239,7 +239,7 @@ public class TaskInstancesGet extends AbstractWorkflowWebscript {
             }
         }
 
-        Map<String, Object> model = new HashMap<String, Object>();
+        Map<String, Object> model = new HashMap<>();
         model.put("taskInstances", results);
 
         if (maxItems != DEFAULT_MAX_ITEMS || skipCount != DEFAULT_SKIP_COUNT) {
