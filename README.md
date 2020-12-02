@@ -101,3 +101,13 @@ Use
 5.	Select tasks you want to complete and click a transaction button. After that you will see a popup reporting if all tasks will have been completed.
 6.	The filter selection is saved in the user preferences and pre-selected the next time you return in My Tasks page.
 
+Screenshots
+-----------
+![Screenshot1](https://github.com/IntesysOpenway/openway-tasklist/raw/master/screenshots/20170403_01.png)
+
+![Screenshot2](https://github.com/IntesysOpenway/openway-tasklist/raw/master/screenshots/20170403_02.png)
+
+![Screenshot3](https://github.com/IntesysOpenway/openway-tasklist/raw/master/screenshots/20170403_03.png)
+
+![Screenshot4](https://github.com/IntesysOpenway/openway-tasklist/raw/master/screenshots/20170403_04.png)
+
