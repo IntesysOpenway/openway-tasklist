@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>it.iopenway</groupId>
 		<artifactId>openway-tasklist</artifactId>
-		<version>6.2.0.1.0</version>
+		<version>6.2.0.1.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>openway-tasklist-alfresco</artifactId>
 	<packaging>jar</packaging>
