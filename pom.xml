@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>openway-tasklist</artifactId>
-	<version>7.2.0.1.0-SNAPSHOT</version>
+	<version>7.2.0.1.0</version>
 	<packaging>pom</packaging>
 
 	<name>Intesys Openway Tasklist</name>
@@ -20,7 +20,7 @@
 	<scm>
 		<!-- URL to GIT folder that contains this pom -->
 		<developerConnection>scm:git:git@github.com:IntesysOpenway/openway-tasklist.git</developerConnection>
-	  <tag>HEAD</tag>
+	  <tag>7.2.0.1.0</tag>
   </scm>
 
 	<properties>
