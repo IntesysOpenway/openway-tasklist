@@ -14,6 +14,14 @@ services:
       dockerfile: ./Dockerfile
       context: ../../../target
     environment:
+      JAVA_TOOL_OPTIONS: "${keystore.settings}"
+      JAVA_OPTS: "
+        -Dsolr.secureComms=secret
+        -Dsolr.sharedSecret=secret
+        -Dsolr.base.url=/solr
+        -Dindex.subsystem.name=solr6
+        -Dmessaging.broker.url=\"failover:(nio://openway-tasklist-activemq:61616)?timeout=3000&jms.useCompression=true\"
+        "
       CATALINA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888"
     ports:
       - "${acs.port}:8080"
@@ -34,10 +42,12 @@ services:
     volumes:
       - openway-tasklist-db-volume:/var/lib/postgresql/data
   openway-tasklist-ass:
-    image: alfresco/alfresco-search-services:1.2.0
+    image: alfresco/alfresco-search-services:2.0.3
     environment:
       SOLR_ALFRESCO_HOST: openway-tasklist-acs
       SOLR_ALFRESCO_PORT: 8080
+      SOLR_ALFRESCO_SECURECOMMS: secret
+      SOLR_ALFRESCO_SECURECOMMS_SECRET: secret
       SOLR_SOLR_HOST: openway-tasklist-ass
       SOLR_SOLR_PORT: 8983
       SOLR_CREATE_ALFRESCO_DEFAULTS: alfresco,archive
@@ -46,6 +56,9 @@ services:
     volumes:
       - openway-tasklist-ass-volume:/opt/alfresco-search-services/contentstore
       - openway-tasklist-ass-volume:/opt/alfresco-search-services/data
+  openway-tasklist-activemq:
+    image: alfresco/alfresco-activemq:5.16.4-jre11-centos7
+    mem_limit: 1g
 volumes:
   openway-tasklist-acs-volume:
     external: true
